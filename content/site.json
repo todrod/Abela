@@ -1,0 +1,252 @@
+{
+  "_readme": "Single editable content record for the site. Every fact carries a `status`. confirmed = approved by Dr. Abela or office staff (only these appear in a production build). public = corroborated in public sources, awaiting practice confirmation (shown in staging builds with a marker). lead = secondary source only (never rendered; listed in the content-gaps report). missing = not yet supplied (staging shows a placeholder; production omits). `source` cites the research handoff reference numbers.",
+
+  "site": {
+    "url": { "value": null, "status": "missing", "note": "No independent domain established. Do not invent one." },
+    "lastResearched": "2026-11-02"
+  },
+
+  "physician": {
+    "name": { "value": "Oliver G. Abela, MD, FACC", "status": "confirmed", "source": "Hospital and professional profiles [1,2,10]" },
+    "shortName": { "value": "Dr. Abela", "status": "confirmed" },
+    "fullLegalName": { "value": "Oliver George Abela", "status": "public", "source": "[2,4]" },
+    "npi": { "value": "1659690337", "status": "public", "source": "[1,13]" },
+    "license": { "value": "Florida ME136178", "status": "public", "source": "[7]", "note": "Clear/Active, expires 2028-01-31" },
+    "languages": { "value": ["English"], "status": "public", "source": "[2]" },
+    "portrait": { "value": null, "status": "missing", "note": "Approved headshot required. Do not use scraped hospital photos." },
+    "shortBio": {
+      "value": "Oliver G. Abela, MD, FACC, is a Tampa cardiologist with fellowship training in cardiovascular disease, interventional cardiology, and advanced heart failure and transplant cardiology. His background includes complex coronary intervention, structural heart procedures, and cardiovascular imaging. He earned his medical degree at Michigan State University and completed postgraduate training in Michigan, Ohio, Nevada, and Arizona.",
+      "status": "public",
+      "source": "Draft copy, handoff section 8",
+      "note": "Editorial draft. Needs physician approval."
+    },
+    "approach": { "value": null, "status": "missing", "note": "Dr. Abela's own description of how he works with patients. Do not write promises about visit length, access, or continuity without it." }
+  },
+
+  "brand": {
+    "tagline": { "value": "Advanced heart care. A clear plan forward.", "status": "public", "source": "Editorial recommendation, handoff section 8" },
+    "supportingLine": { "value": "Tampa cardiology with expertise in coronary disease, advanced heart failure, and structural heart conditions.", "status": "public", "source": "Editorial recommendation, handoff section 8" },
+    "logo": { "value": null, "status": "missing" }
+  },
+
+  "practice": {
+    "name": { "value": "Abela Heart and Vascular Center", "status": "public", "source": "[3,4]", "note": "Candidate brand. Confirm spelling, ownership, and relationship with Tampa Heart & Vascular Associates." },
+    "legalEntity": { "value": "AHVC, LLC", "status": "public", "source": "[5]", "note": "Confirm the legal footer name." },
+    "groupAffiliation": { "value": "Tampa Heart & Vascular Associates", "status": "public", "source": "[1]", "note": "The public directory associates the Suite 800 address with this group. Confirm the relationship." },
+    "acceptingNewPatients": { "value": true, "status": "public", "source": "[1]", "note": "AdventHealth shows him accepting new patients. Confirm with the office." },
+    "insurance": { "value": null, "status": "missing" },
+    "referralRequired": { "value": null, "status": "missing" },
+    "telehealth": { "value": null, "status": "lead", "source": "[18]", "note": "Healthgrades only. Confirm." },
+    "patientAges": { "value": null, "status": "missing", "note": "Adult cardiology is assumed. Confirm. Do not imply pediatric services." }
+  },
+
+  "contact": {
+    "address": {
+      "value": {
+        "street": "2727 W. Dr. Martin Luther King Jr. Blvd.",
+        "suite": "Suite 800",
+        "city": "Tampa",
+        "region": "FL",
+        "postalCode": "33607"
+      },
+      "status": "public",
+      "source": "[1,2]",
+      "note": "Best-supported public location. Confirm it is his current appointment location."
+    },
+    "phone": { "value": "813-873-0000", "status": "public", "source": "[1,2]", "note": "Appears to be the group line. Confirm a direct line." },
+    "fax": { "value": "813-873-3659", "status": "public", "source": "[1,6]" },
+    "hours": { "value": null, "status": "missing" },
+    "parking": { "value": null, "status": "missing" },
+    "email": { "value": null, "status": "missing", "note": "Do not invent an email address." },
+    "excludedAddresses": [
+      { "value": "2715 North MacDill Avenue", "status": "lead", "source": "[5,17]", "note": "Corporate principal address only. ZIP is inconsistent. Keep off the site." },
+      { "value": "3000 Medical Park Drive, Suite 300", "status": "lead", "source": "[2]", "note": "Older listing. Do not publish as current." }
+    ]
+  },
+
+  "links": {
+    "booking": { "value": null, "status": "missing", "note": "Authorized destination only" },
+    "portal": { "value": null, "status": "missing", "note": "Authorized destination only" },
+    "records": { "value": null, "status": "missing" },
+    "billing": { "value": null, "status": "missing" },
+    "afterHours": { "value": null, "status": "missing" }
+  },
+
+  "training": [
+    { "stage": "Medical degree", "institution": "Michigan State University College of Human Medicine", "years": "2010", "status": "public", "source": "[1,8,9]" },
+    { "stage": "Internal medicine residency", "institution": "Michigan State University / Sparrow", "years": "2010–2013", "status": "public", "source": "[1,8,9]" },
+    { "stage": "Advanced heart failure and transplant cardiology fellowship", "institution": "University of Cincinnati College of Medicine", "years": "2013–2014", "status": "public", "source": "[1,8,9]" },
+    { "stage": "Cardiovascular disease fellowship", "institution": "University of Nevada, Las Vegas", "years": "2014–2017", "status": "public", "source": "[1,8,9]", "note": "Confirm the historical program name against his CV." },
+    { "stage": "Interventional cardiology fellowship", "institution": "University of Arizona College of Medicine–Phoenix / Banner", "years": "2017–2018", "status": "public", "source": "[1,8,9]" }
+  ],
+
+  "credentials": [
+    { "label": "Board certified, Internal Medicine", "issuer": "American Board of Internal Medicine", "status": "public", "source": "[2]" },
+    { "label": "Board certified, Cardiovascular Disease", "issuer": "American Board of Internal Medicine", "status": "public", "source": "[2]" },
+    { "label": "Board certified, Interventional Cardiology", "issuer": "American Board of Internal Medicine", "status": "public", "source": "[2,10]" },
+    { "label": "Board certified, Advanced Heart Failure and Transplant Cardiology", "issuer": "American Board of Internal Medicine", "status": "public", "source": "[2]" },
+    { "label": "Fellow of the American College of Cardiology (FACC)", "issuer": "American College of Cardiology", "status": "public", "source": "[10]" },
+    { "label": "Diplomate, National Board of Echocardiography", "issuer": "National Board of Echocardiography", "status": "public", "source": "[10]" },
+    { "label": "Cardiovascular CT certification", "issuer": "Certification Board of Cardiovascular Computed Tomography", "status": "public", "source": "[10]" },
+    { "label": "Basic Competency in Clinical Lipidology (BCCL)", "issuer": "National Lipid Association", "status": "public", "source": "[3,10]", "note": "Do not upgrade this to 'board-certified lipidologist'." }
+  ],
+
+  "hospitals": [
+    { "name": "St. Joseph's Hospital", "status": "public", "source": "[2]", "note": "Strongest directly listed affiliation. Confirm privileges." },
+    { "name": "AdventHealth Tampa", "status": "public", "source": "[1,10]", "note": "Confirm current privileges separately from prior employment." },
+    { "name": "HCA Florida South Tampa Hospital", "status": "lead", "source": "[18]" },
+    { "name": "Tampa General Hospital", "status": "lead", "source": "[13]" },
+    { "name": "St. Joseph's Women's Hospital / Children's Hospital", "status": "lead", "source": "[2]", "note": "Possibly system credentialing. Do not imply pediatric cardiology." }
+  ],
+
+  "roles": [
+    { "label": "Editorial board member, Interventional Cardiology (journal)", "status": "public", "source": "[19]", "note": "Not editor-in-chief. Get his preferred wording." },
+    { "label": "Staff Physician, University of Miami Miller School of Medicine, Cardiovascular Medicine", "status": "lead", "source": "[9]", "note": "Ask whether this is current, adjunct, or historical. Never describe it as a professorship." },
+    { "label": "Medical Director, Echocardiography, AdventHealth Tampa and Carrollwood clinics", "status": "lead", "source": "[10]", "note": "Dates and tense needed. Probably historical." }
+  ],
+
+  "areasOfCare": [
+    {
+      "id": "coronary",
+      "title": "Coronary artery disease",
+      "summary": "Chest pain, shortness of breath with exertion, prior heart attack, and blocked or narrowed heart arteries.",
+      "detail": "Care starts with evaluation and a treatment plan, which may include medications, risk-factor management, and testing. When a blockage needs treatment, Dr. Abela's training includes coronary stenting (PCI), complex and high-risk PCI, and chronic total occlusion (CTO) procedures.",
+      "setting": "both",
+      "settingNote": "Catheter-based procedures are done in a hospital catheterization lab, not in the office.",
+      "status": "public",
+      "source": "[10]"
+    },
+    {
+      "id": "heart-failure",
+      "title": "Advanced heart failure",
+      "summary": "Weakened or stiff heart muscle, fluid buildup, and heart failure that is difficult to control.",
+      "detail": "Dr. Abela completed dedicated fellowship training in advanced heart failure and transplant cardiology. Management focuses on optimizing medications, monitoring, and coordinating hospital-level care when it is needed.",
+      "setting": "both",
+      "settingNote": "Which monitoring services are available through the office has not been confirmed.",
+      "status": "public",
+      "source": "[2,8,11]"
+    },
+    {
+      "id": "structural",
+      "title": "Structural heart and valve disease",
+      "summary": "Narrowed or leaking heart valves, holes in the heart (ASD/PFO), and stroke prevention for atrial fibrillation.",
+      "detail": "His procedural background includes transcatheter aortic valve replacement (TAVR), transcatheter mitral repair (MitraClip), ASD/PFO closure, and left atrial appendage closure (Watchman). An office visit helps determine whether a procedure is appropriate.",
+      "setting": "hospital",
+      "settingNote": "These procedures are performed in the hospital.",
+      "status": "public",
+      "source": "[10]"
+    },
+    {
+      "id": "imaging",
+      "title": "Cardiac imaging",
+      "summary": "Echocardiography (heart ultrasound) and cardiac CT to look at the heart's structure and function.",
+      "detail": "Dr. Abela holds credentials in echocardiography and cardiovascular CT, and he uses imaging to guide diagnosis and procedure planning.",
+      "setting": "unconfirmed",
+      "settingNote": "Whether testing is done in the office or at an outside facility has not been confirmed.",
+      "status": "public",
+      "source": "[9,10]"
+    },
+    {
+      "id": "prevention",
+      "title": "Prevention and cholesterol management",
+      "summary": "High cholesterol, family history of heart disease, and lowering future cardiovascular risk.",
+      "detail": "With a clinical lipidology credential and research on plaque biology, Dr. Abela can address cholesterol and risk-factor management as part of long-term heart care.",
+      "setting": "office",
+      "settingNote": "",
+      "status": "public",
+      "source": "[3,14]"
+    },
+    {
+      "id": "shock",
+      "title": "Cardiogenic shock and circulatory support",
+      "summary": "Critical heart failure that needs temporary mechanical support of the circulation.",
+      "detail": "This is hospital-based expertise, including Impella-supported procedures. It is not an office service.",
+      "setting": "hospital",
+      "settingNote": "Hospital care only.",
+      "status": "public",
+      "source": "[9,10]"
+    },
+    {
+      "id": "pe",
+      "title": "Pulmonary embolism intervention",
+      "summary": "Catheter-based removal of blood clots in the lungs.",
+      "detail": "Listed as a clinical interest (mechanical thrombectomy).",
+      "setting": "hospital",
+      "settingNote": "",
+      "status": "lead",
+      "source": "[9]",
+      "note": "Confirm this is still part of his current clinical work."
+    }
+  ],
+
+  "research": {
+    "trials": [
+      {
+        "name": "DRAIN-HF",
+        "id": "NCT05677100",
+        "role": "Principal investigator (Tampa site)",
+        "summary": "A clinical trial evaluating an investigational device, the Aortix system, for patients hospitalized with acute heart failure. The device is investigational. It is not an approved routine treatment.",
+        "sponsor": "Procyrion",
+        "url": "https://clinicaltrials.gov/study/NCT05677100",
+        "status": "public",
+        "source": "[11]",
+        "note": "Confirm recruitment status and whether the independent office has a role before publishing."
+      }
+    ],
+    "publications": [
+      {
+        "title": "Plaque rupture and thrombosis",
+        "journal": "Current Atherosclerosis Reports",
+        "citation": "2016;18(6):29",
+        "authorship": "First author",
+        "doi": "10.1007/s11883-016-0587-0",
+        "pmid": "27091328",
+        "status": "public",
+        "source": "[14]"
+      },
+      {
+        "title": "Inferior-wall ischemia in non-dominant right coronary anatomy",
+        "journal": "World Journal of Cardiology",
+        "citation": "2017;9(3):261–267",
+        "authorship": "Coauthor",
+        "doi": "10.4330/wjc.v9.i3.261",
+        "pmid": "28400923",
+        "status": "public",
+        "source": "[15]"
+      },
+      {
+        "title": "Valve-in-valve TAVR in a high-risk patient with a failing Biocor prosthesis",
+        "journal": "Cardiovascular Innovations and Applications",
+        "citation": "2022;6:191–194",
+        "authorship": "Coauthor",
+        "doi": "10.15212/CVIA.2021.0031",
+        "pmid": null,
+        "status": "public",
+        "source": "[20]",
+        "note": "Confirm the final citation against the paper."
+      }
+    ],
+    "achievements": [
+      { "label": "Performed AdventHealth Tampa's first percutaneous axillary-artery Impella-supported PCI.", "status": "lead", "source": "[10]", "note": "Keep the exact institution and procedure scope. This is not a 'first in Florida' claim. Physician approval required." }
+    ]
+  },
+
+  "patientInfo": {
+    "whatToBring": {
+      "value": [
+        "Photo ID and insurance card",
+        "A current list of medications and doses, or the bottles themselves",
+        "Referral paperwork, if your plan requires it",
+        "Recent test results, ECGs, imaging reports, or hospital discharge papers",
+        "A list of questions you would like to ask"
+      ],
+      "status": "public",
+      "source": "Generic editorial guidance",
+      "note": "Generic. Confirm against the office's own intake process."
+    },
+    "emergency": {
+      "value": "If you think you are having a heart attack, stroke, or other medical emergency, call 911 right away. Do not use this website, voicemail, or email for urgent medical concerns.",
+      "status": "confirmed"
+    }
+  }
+}

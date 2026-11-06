@@ -1,0 +1,13 @@
+{
+  "name": "abela-site",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Physician website for Oliver G. Abela, MD, FACC",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:production": "node build.mjs --production",
+    "serve": "python3 -m http.server 8080 --directory dist"
+  },
+  "engines": { "node": ">=18" }
+}
