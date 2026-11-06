@@ -16,6 +16,7 @@ const MODE = PRODUCTION ? "production" : "staging";
 const OUT = join(ROOT, "dist");
 const SRC = join(ROOT, "src/assets");
 const C = JSON.parse(readFileSync(join(ROOT, "content/site.json"), "utf8"));
+const CONDITIONS = JSON.parse(readFileSync(join(ROOT, "content/conditions.json"), "utf8"));
 
 // ---------- content helpers ----------
 const esc = (s) =>
@@ -85,6 +86,10 @@ const ECG_PATH = "M0 120 H640 l22 -16 l16 16 H720 l16 -92 l20 156 l18 -104 l12 4
 const ecg = (cls, pulse = false) =>
   `<svg class="${cls}" aria-hidden="true" viewBox="0 0 1200 200" preserveAspectRatio="none"><path class="ecg-base" pathLength="1" d="${ECG_PATH}"/>${pulse ? `<path class="ecg-pulse" pathLength="1" d="${ECG_PATH}"/>` : ""}</svg>`;
 
+// Individual condition pages exist for areas with renderable long-form copy (content/conditions.json).
+const conditionPage = (id) => (ok(CONDITIONS[id]) ? `condition-${id}.html` : null);
+const conditionHref = (id) => conditionPage(id) || `care.html#${id}`;
+
 // ---------- page registry (pages with no renderable content drop out of nav) ----------
 const pages = [];
 const page = (file, navLabel, title, description, body) => {
@@ -112,12 +117,18 @@ const settingLabel = {
   unconfirmed: "Care setting to be confirmed",
 };
 
+// Portrait: a high-resolution headshot (>= 500px wide) fills the hero's right column.
+// A small one (like the current directory placeholder) is shown near its real size as a byline photo instead.
+const portraitData = v(C.physician.portrait);
+const largePortrait = !!(portraitData && (portraitData.width || 0) >= 500);
+const portraitImg = (cls, eager = false) =>
+  portraitData
+    ? `<img class="${cls}" src="${esc(portraitData.src)}" alt="${esc(portraitData.alt || name)}" width="${portraitData.width || 560}" height="${portraitData.height || 700}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`
+    : "";
 const portrait = () => {
-  const p = v(C.physician.portrait);
-  if (p)
-    return `<figure class="hero-figure"><img class="portrait" src="${esc(p.src)}" alt="${esc(p.alt || name)}" width="560" height="700" fetchpriority="high" decoding="async"></figure>`;
-  // Stand-in until an approved headshot exists. Production omits it and the headline takes the full width.
-  if (PRODUCTION) return "";
+  if (largePortrait) return `<figure class="hero-figure">${portraitImg("portrait", true)}${flag(C.physician.portrait)}</figure>`;
+  if (portraitData || PRODUCTION) return "";
+  // Stand-in until any headshot exists. Production omits it and the headline takes the full width.
   return `<figure class="hero-figure" aria-hidden="true"><div class="portrait-placeholder"><small>Approved headshot pending</small></div></figure>`;
 };
 
@@ -210,7 +221,7 @@ ${ecg("hero-ecg", true)}
 <div class="wrap hero-grid${portrait() ? " has-media" : ""}">
 <div class="hero-copy">
 <h1>${headline ? esc(headline) + flag(C.brand.headline) : esc(name)}</h1>
-${headline ? `<p class="hero-name">${esc(name)}${practiceName ? `<span> · ${esc(practiceName)}${flag(C.practice.name)}</span>` : ""}</p>` : ""}
+${headline ? `<div class="hero-byline">${!largePortrait && portraitData ? `<span class="byline-photo-wrap">${portraitImg("byline-photo", true)}${flag(C.physician.portrait)}</span>` : ""}<p class="hero-name">${esc(name)}${practiceName ? `<span>${esc(practiceName)}${flag(C.practice.name)}</span>` : ""}</p></div>` : ""}
 ${support ? `<p class="lede">${esc(support)}${flag(C.brand.supportingLine)}</p>` : ""}
 <div class="actions">${callButton()}${directionsButton()}</div>
 ${!phone && !addr ? pending("office telephone and appointment address") : ""}
@@ -241,11 +252,11 @@ ${areas.length ? `
 <h2 id="conditions-h">Conditions treated</h2>
 ${textLink("care.html", "See all conditions")}
 </div>
-${symptoms.length ? `<div class="symptom-chips"><p id="sym-h">Start with a symptom:</p><ul role="list" aria-labelledby="sym-h">${symptoms.map((s) => `<li><a href="care.html#${s.area}">${esc(s.label)}</a>${flag(s)}</li>`).join("")}</ul></div>` : ""}
+${symptoms.length ? `<div class="symptom-chips"><p id="sym-h">Start with a symptom:</p><ul role="list" aria-labelledby="sym-h">${symptoms.map((s) => `<li><a href="${conditionHref(s.area)}">${esc(s.label)}</a>${flag(s)}</li>`).join("")}</ul></div>` : ""}
 <ul class="conditions" role="list">
 ${areas.map((a) => `<li>
 ${conditionIcon(a.id)}
-<h3><a href="care.html#${a.id}">${esc(a.title)}</a>${flag(a)}</h3>
+<h3><a href="${conditionHref(a.id)}">${esc(a.title)}</a>${flag(a)}</h3>
 <p>${esc(a.summary)}</p>
 <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
 </li>`).join("\n")}
@@ -266,7 +277,7 @@ ${bio ? `
 <section class="section section-navy on-dark" aria-labelledby="meet-h">
 ${ecg("band-ecg")}
 <div class="wrap meet">
-<h2 id="meet-h">About ${esc(shortName)}</h2>
+<div class="meet-head">${portraitImg("meet-photo")}<h2 id="meet-h">About ${esc(shortName)}</h2></div>
 <div>
 <p>${esc(bio)}${flag(C.physician.shortBio)}</p>
 <a class="btn btn-light" href="about.html"><span>See training and credentials</span>${icon("arrow")}</a>
@@ -293,7 +304,7 @@ ${closing({ brand: true })}
     bio || training.length || creds.length
       ? `
 <header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<h1>${esc(name)}</h1>
+<div class="about-head">${portraitImg("about-photo", true)}<h1>${esc(name)}</h1></div>
 ${bio ? `<p class="lede">${esc(bio)}${flag(C.physician.shortBio)}</p>` : ""}
 </div></header>
 ${trustStrip()}
@@ -359,10 +370,50 @@ ${conditionIcon(a.id)}<h2 id="${a.id}-h">${esc(a.title)}${flag(a)}</h2>
 <p class="care-summary">${esc(a.summary)}</p>
 <p>${esc(a.detail)}</p>
 ${a.settingNote ? `<p class="setting-note"><strong>Where care happens:</strong> ${esc(a.settingNote)}</p>` : ""}
+${conditionPage(a.id) ? `<p class="care-more">${textLink(conditionPage(a.id), `Read more about ${a.title.toLowerCase()}`)}</p>` : ""}
 </section>`).join("")}
 ${emergencyNote()}
 </div>`
       : ""
+  );
+}
+
+// ---------- Individual condition pages ----------
+for (const a of list(C.areasOfCare)) {
+  const c = CONDITIONS[a.id];
+  if (!ok(c)) continue;
+  const others = list(C.areasOfCare).filter((x) => x.id !== a.id);
+  const block = (title, items) =>
+    items?.length ? `<section class="block"><h2>${title}</h2><ul class="checklist">${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></section>` : "";
+  page(
+    `condition-${a.id}.html`,
+    null,
+    c.seoTitle || a.title,
+    `${a.title}: symptoms, evaluation, and treatment with ${name}, cardiologist in Tampa, Florida.`,
+    `
+<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
+<p class="crumbs"><a href="care.html">Conditions</a> <span aria-hidden="true">/</span> ${esc(a.title)}</p>
+<div class="cond-title">${conditionIcon(a.id)}<h1>${esc(a.title)}${flag(c)}</h1></div>
+<p class="lede">${esc(c.intro)}</p>
+<span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
+</div></header>
+<div class="wrap prose-grid">
+<div>
+${block("Common signs and reasons for a visit", c.symptoms)}
+${block("How it is evaluated", c.evaluation)}
+${block("Treatment options", c.treatment)}
+${a.settingNote ? `<p class="setting-note"><strong>Where care happens:</strong> ${esc(a.settingNote)}</p>` : ""}
+${emergencyNote()}
+</div>
+<aside>
+<section class="block panel">
+<h2>${esc(shortName)}'s background</h2>
+<p>${esc(a.detail)}${flag(a)}</p>
+${textLink("about.html", "See training and credentials")}
+</section>
+${others.length ? `<section class="block panel"><h2>Other conditions</h2><ul class="plain">${others.map((o) => `<li><a href="${conditionHref(o.id)}">${esc(o.title)}</a></li>`).join("")}</ul></section>` : ""}
+</aside>
+</div>`
   );
 }
 
@@ -506,7 +557,7 @@ ${after ? `<p>${esc(after)}${flag(R.afterVisit)}</p>` : ""}
 ${areas.length ? `
 <section class="block panel">
 <h2>Conditions seen</h2>
-<ul class="plain">${areas.map((a) => `<li><a href="care.html#${a.id}">${esc(a.title)}</a> <span class="muted small">· ${esc(settingLabel[a.setting])}</span>${flag(a)}</li>`).join("")}</ul>
+<ul class="plain">${areas.map((a) => `<li><a href="${conditionHref(a.id)}">${esc(a.title)}</a> <span class="muted small">· ${esc(settingLabel[a.setting])}</span>${flag(a)}</li>`).join("")}</ul>
 </section>` : ""}
 ${hospitals.length ? `
 <section class="block panel">
@@ -543,7 +594,11 @@ ${fax ? `<div><dt>Fax</dt><dd>${esc(fax)}${flag(C.contact.fax)}</dd></div>` : ""
 ${hours ? `<div><dt>Office hours</dt><dd>${esc(hours)}</dd></div>` : !PRODUCTION ? `<div><dt>Office hours</dt><dd>${pending("office hours")}</dd></div>` : ""}
 ${v(C.contact.parking) ? `<div><dt>Parking</dt><dd>${esc(v(C.contact.parking))}</dd></div>` : !PRODUCTION ? `<div><dt>Parking</dt><dd>${pending("parking instructions")}</dd></div>` : ""}
 </dl>
-<div class="actions">${callButton()}${directionsButton()}</div>
+<div class="actions">${callButton()}${directionsButton()}${phone || addr ? `<a class="btn btn-secondary" href="assets/office-contact.vcf" download data-event="save-contact"><span>Save contact card</span></a>` : ""}</div>
+${addr ? `<div class="map-facade" data-map-src="https://www.google.com/maps?q=${encodeURIComponent(addrLines(addr).join(", "))}&output=embed">
+<p>The map loads from Google only when you ask for it.</p>
+<button class="btn btn-secondary" type="button" data-load-map>${icon("pin")}<span>Show map</span></button>
+</div>` : ""}
 </div>
 <aside>
 ${hasCurrentInfo ? `<section class="block panel" id="current">
@@ -616,6 +671,8 @@ function buildAssets() {
   // Everything else (favicon, portrait and office photos) is copied as-is.
   for (const f of readdirSync(SRC)) {
     if (["styles.css", "main.js", "fonts"].includes(f) || statSync(join(SRC, f)).isDirectory()) continue;
+    // Temporary third-party placeholders (e.g. the directory headshot) never ship to production.
+    if (PRODUCTION && f.includes("placeholder")) continue;
     copyFileSync(join(SRC, f), join(OUT, "assets", f));
   }
 }
@@ -623,6 +680,18 @@ function buildAssets() {
 // Tiny inline script: marks JS as available before first paint, so the mobile menu never flashes open.
 const INLINE_JS = 'document.documentElement.classList.add("js")';
 const INLINE_JS_HASH = createHash("sha256").update(INLINE_JS).digest("base64");
+
+// ---------- analytics (off until growth.analytics is confirmed) ----------
+// Set growth.analytics.value to { "provider": "plausible", "domain": "example.com" } or
+// { "provider": "fathom", "site": "ABCDEFG" } and status "confirmed". Both are cookie-free.
+const ANALYTICS = (() => {
+  const a = PRODUCTION ? v(C.growth?.analytics) : null;
+  if (!a) return null;
+  if (a.provider === "plausible") return { origin: "https://plausible.io", tag: `<script defer data-domain="${esc(a.domain)}" src="https://plausible.io/js/script.tagged-events.js"></script>` };
+  if (a.provider === "fathom") return { origin: "https://cdn.usefathom.com", tag: `<script defer data-site="${esc(a.site)}" src="https://cdn.usefathom.com/script.js"></script>` };
+  return null;
+})();
+const analyticsTag = () => (ANALYTICS ? ANALYTICS.tag : "");
 
 // ---------- layout ----------
 function structuredData() {
@@ -650,9 +719,11 @@ function structuredData() {
 }
 
 function layout(p) {
-  const navItem = (x) => `<li><a href="${x.file}"${x.file === p.file ? ' aria-current="page"' : ""}>${esc(x.navLabel)}</a></li>`;
-  const nav = pages.filter((x) => x.file !== "index.html").map(navItem).join("");
-  const footerNav = pages.map(navItem).join("");
+  const current = p.file.startsWith("condition-") ? "care.html" : p.file;
+  const navItem = (x) => `<li><a href="${x.file}"${x.file === current ? ' aria-current="page"' : ""}>${esc(x.navLabel)}</a></li>`;
+  const inNav = pages.filter((x) => x.navLabel);
+  const nav = inNav.filter((x) => x.file !== "index.html").map(navItem).join("");
+  const footerNav = inNav.map(navItem).join("");
   const year = new Date().getFullYear();
   const url = v(C.site.url);
   const fullTitle = p.file === "index.html" ? `${name} | Cardiologist in Tampa, FL` : `${p.title} | ${name}`;
@@ -673,6 +744,8 @@ ${url ? `<link rel="canonical" href="${esc(url.replace(/\/$/, "") + "/" + (p.fil
 <link rel="stylesheet" href="${assets.css}">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+${analyticsTag()}
 <meta property="og:type" content="website">
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(p.description)}">
@@ -686,7 +759,7 @@ ${structuredData()}
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
-${PRODUCTION ? "" : `<div class="staging-banner" role="note"><strong>Staging preview.</strong> Items marked <span class="flag">Unverified</span> come from public records and need practice confirmation. They are left out of the production build. <button type="button" class="marker-toggle" data-toggle-markers aria-pressed="false">Hide review markers</button></div>`}
+${PRODUCTION ? "" : `<aside class="staging-banner" aria-label="Staging preview"><strong>Staging preview.</strong> Items marked <span class="flag">Unverified</span> come from public records and need practice confirmation. They are left out of the production build. <button type="button" class="marker-toggle" data-toggle-markers aria-pressed="false">Hide review markers</button></aside>`}
 <header class="site-header">
 <div class="wrap header-inner">
 <a class="brand" href="index.html">
@@ -720,7 +793,7 @@ ${hasReferrals && pages.some((x) => x.file === "referrals.html") ? `<p class="fo
 </div>
 <div class="wrap footer-legal"><p>© ${year} ${esc(legal || name)}. All rights reserved.</p></div>
 </footer>
-${phone || addr ? `<div class="mobile-bar">${callButton("mb-call")}${addr ? `<a href="${mapsHref(addr)}" rel="noopener" target="_blank">Get directions<span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>` : ""}</div>` : ""}
+${phone || addr ? `<nav class="mobile-bar" aria-label="Quick contact">${callButton("mb-call")}${addr ? `<a href="${mapsHref(addr)}" rel="noopener" target="_blank">Get directions<span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>` : ""}</nav>` : ""}
 <script src="${assets.js}" defer></script>
 </body>
 </html>
@@ -732,11 +805,12 @@ function headersFile() {
   // Netlify / Cloudflare Pages format. Other hosts: mirror these as server config.
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'sha256-${INLINE_JS_HASH}'`,
+    `script-src 'self' 'sha256-${INLINE_JS_HASH}'${ANALYTICS ? " " + ANALYTICS.origin : ""}`,
     "style-src 'self'",
     "img-src 'self' data:",
     "font-src 'self'",
-    "connect-src 'none'",
+    `connect-src ${ANALYTICS ? ANALYTICS.origin : "'none'"}`,
+    "frame-src https://www.google.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'none'",
@@ -765,13 +839,14 @@ function gaps() {
     if (Array.isArray(node)) return node.forEach((n, i) => walk(n, `${path}[${i}]`));
     if (node && typeof node === "object") {
       if (typeof node.status === "string" && node.status !== "confirmed" && rows[node.status]) {
-        const label = node.q || node.label || node.title || node.name || node.stage || (typeof node.value === "string" ? node.value : "");
+        const label = node.seoTitle || node.q || node.label || node.title || node.name || node.stage || (typeof node.value === "string" ? node.value : "");
         rows[node.status].push({ path, label, source: node.source || "", note: node.note || "" });
       }
       for (const [k, val] of Object.entries(node)) if (k !== "value") walk(val, path ? `${path}.${k}` : k);
     }
   };
   walk(C, "");
+  walk(CONDITIONS, "conditions");
   const table = (r) =>
     r.length
       ? "| Field | Content | Source | Note |\n|---|---|---|---|\n" +
@@ -811,6 +886,19 @@ for (const p of pages) {
   writeFileSync(join(OUT, p.file), html[p.file]);
 }
 writeFileSync(join(OUT, "_headers"), headersFile());
+// Web app manifest (add to home screen).
+writeFileSync(join(OUT, "site.webmanifest"), JSON.stringify({
+  name, short_name: shortName, start_url: "./", display: "browser", background_color: "#faf8f4", theme_color: "#14304f",
+  icons: [{ src: "assets/apple-touch-icon.png", sizes: "180x180", type: "image/png" }, { src: "assets/favicon.svg", sizes: "any", type: "image/svg+xml" }],
+}, null, 2));
+// Contact card (vCard) for patients and referring offices: office details only, never personal data.
+if (phone || addr) {
+  const vc = ["BEGIN:VCARD", "VERSION:3.0", `FN:${name}`, `N:Abela;Oliver;G.;;MD`, practiceName ? `ORG:${practiceName}` : "", "TITLE:Cardiologist",
+    phone ? `TEL;TYPE=WORK,VOICE:+1-${phone}` : "", fax ? `TEL;TYPE=WORK,FAX:+1-${fax}` : "",
+    addr ? `ADR;TYPE=WORK:;${addr.suite || ""};${addr.street};${addr.city};${addr.region};${addr.postalCode};USA` : "",
+    v(C.site.url) ? `URL:${v(C.site.url)}` : "", "END:VCARD"].filter(Boolean).join("\r\n");
+  writeFileSync(join(OUT, "assets/office-contact.vcf"), vc + "\r\n");
+}
 // 404 page: uses the shared layout, never listed in navigation.
 html["404.html"] = minifyHtml(layout({
   file: "404.html", title: "Page not found", description: "This page could not be found.",

@@ -22,6 +22,14 @@ Requires Node 18+. There is nothing to install.
 - **Production guard.** The build fails if any staging marker (badge, placeholder, banner, `noindex`) would reach production output.
 - **Size report.** Each build prints page, asset and font sizes, plus the compressed first-load weight of the home page (about 85 KB).
 
+## Switches waiting on the practice
+
+- **Headshot.** Put the approved file in `src/assets/` and set `physician.portrait` (`src`, `alt`, `width`, `height`, status `confirmed`). At 500 px wide or more it fills the hero's right column. A smaller image is shown as a byline photo. Files with "placeholder" in the name never ship to production.
+- **Analytics.** Set `growth.analytics.value` to `{ "provider": "plausible", "domain": "example.com" }` or `{ "provider": "fathom", "site": "ID" }` and mark it confirmed. The script, security policy and click events (`call`, `directions`, `save-contact`) turn on together.
+- **Domain.** Set `site.url` to enable canonical links, `og:url`/`og:image`, `sitemap.xml` and the sitemap line in `robots.txt`.
+
+CI (`.github/workflows/build.yml`) runs the guarded production build and the staging build on every push and uploads both as artifacts.
+
 ## How verification works
 
 Each fact in `content/site.json` has a `status`:
@@ -52,7 +60,7 @@ src/assets/           styles.css, main.js (mobile menu + call bar), favicon.svg,
 CONTENT-GAPS.md       generated checklist of unconfirmed or missing content
 ```
 
-Pages: Home, About Dr. Abela, Conditions, Research, Patients, For physicians (referrals), Contact, plus a 404 page.
+Pages: Home, About Dr. Abela, Conditions (plus one page per condition, from `content/conditions.json`), Research, Patients, For physicians (referrals), Contact, plus a 404 page.
 
 In staging, the banner's **Hide review markers** switch shows the page without badges or placeholders, for a clean preview.
 

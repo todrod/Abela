@@ -503,3 +503,37 @@ main:focus { outline: none; }
   .panel { border: 1px solid #ccc; box-shadow: none; break-inside: avoid; }
   a { color: inherit; text-decoration: none; }
 }
+
+/* =====================================================================
+   Portrait (byline size until a high-resolution headshot arrives),
+   condition pages, map, contact card.
+   ===================================================================== */
+.hero-byline { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+.byline-photo { width: 76px; height: 95px; object-fit: cover; border-radius: 14px; border: 2px solid rgba(255, 255, 255, .85); box-shadow: 0 8px 24px rgba(0, 0, 0, .3); flex: none; }
+.hero-byline .hero-name { margin: 0; display: grid; gap: .1rem; }
+.hero-byline .hero-name > span { font-size: 1rem; }
+.byline-photo-wrap { position: relative; flex: none; }
+.byline-photo-wrap .flag { position: absolute; left: 50%; bottom: -.55rem; transform: translateX(-50%); margin: 0; }
+.meet-head { display: flex; align-items: center; gap: 1.25rem; align-self: start; }
+.meet-photo { width: 96px; height: 120px; object-fit: cover; border-radius: 16px; border: 2px solid rgba(255, 255, 255, .8); flex: none; }
+.meet-head h2 { margin: 0; }
+.about-head { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1rem; }
+.about-photo { width: 104px; height: 130px; object-fit: cover; border-radius: 16px; border: 2px solid rgba(255, 255, 255, .85); box-shadow: 0 10px 28px rgba(0, 0, 0, .3); flex: none; }
+.about-head h1 { margin: 0; }
+@media (max-width: 520px) { .about-photo { width: 80px; height: 100px; } .meet-photo { width: 76px; height: 95px; } }
+
+.crumbs { font-size: .95rem; margin-bottom: 1rem; color: var(--on-dark-text); }
+.crumbs a { color: #fff; }
+.cond-title { display: flex; align-items: center; gap: 1rem; margin-bottom: .5rem; }
+.cond-title h1 { margin: 0; }
+.cond-title .cond-icon { width: 56px; height: 56px; background: rgba(255, 255, 255, .1); color: #f0a58f; }
+.cond-title .cond-icon svg { width: 30px; height: 30px; }
+.page-head .tag { margin-top: .5rem; }
+.care-more { margin: .9rem 0 0; }
+
+.map-facade { margin-top: 1.5rem; border-radius: var(--radius); border: 1px dashed var(--line-strong); background: var(--sand); padding: 1.5rem; display: grid; gap: .75rem; justify-items: start; }
+.map-facade p { margin: 0; color: var(--ink-soft); font-size: .98rem; }
+.map-facade.is-loaded { padding: 0; border: 0; overflow: hidden; aspect-ratio: 4 / 3; }
+.map-facade iframe { width: 100%; height: 100%; border: 0; }
+.map-facade:not(.is-loaded) [data-load-map] { display: none; }
+.js .map-facade:not(.is-loaded) [data-load-map] { display: inline-flex; }

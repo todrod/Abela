@@ -1,0 +1,145 @@
+{
+  "_readme": "Long-form copy for the individual condition pages (condition-<id>.html), keyed by the ids in site.json areasOfCare. General patient-education wording written for Dr. Abela's review. Every entry is a draft: staging shows it with a Draft marker and production omits the page until its status is set to confirmed. Do not add claims about which tests or services this office provides until the practice confirms them.",
+
+  "coronary": {
+    "status": "draft",
+    "seoTitle": "Coronary artery disease care in Tampa",
+    "intro": "Coronary artery disease happens when plaque builds up inside the arteries that supply the heart muscle. Narrowed arteries can limit blood flow during activity, and a plaque that ruptures can cause a heart attack. Early evaluation and steady treatment lower that risk.",
+    "symptoms": [
+      "Chest pain, pressure, or tightness, especially with exertion or stress",
+      "Shortness of breath during activity that used to be easy",
+      "Pain that spreads to the arm, jaw, neck, or back",
+      "Unusual fatigue, nausea, or sweating with effort",
+      "No symptoms at all, with disease found on a test or after a heart attack"
+    ],
+    "evaluation": [
+      "A review of symptoms, family history, and risk factors such as blood pressure, cholesterol, diabetes, and smoking",
+      "An electrocardiogram (ECG) and blood tests",
+      "Stress testing or imaging, such as an echocardiogram or a coronary CT scan, when appropriate",
+      "Cardiac catheterization in a hospital when other results point to a significant blockage"
+    ],
+    "treatment": [
+      "Medications that lower cholesterol, control blood pressure, prevent clots, and relieve chest pain",
+      "Lifestyle changes, including diet, activity, and stopping smoking",
+      "Coronary stenting (PCI) to open a narrowed artery, performed in a hospital catheterization lab",
+      "Referral for bypass surgery when it is the better option"
+    ]
+  },
+
+  "heart-failure": {
+    "status": "draft",
+    "seoTitle": "Advanced heart failure care in Tampa",
+    "intro": "Heart failure means the heart is not pumping or filling as well as the body needs. It does not mean the heart has stopped. With the right medications and close follow-up, many people feel better, stay out of the hospital, and live longer.",
+    "symptoms": [
+      "Shortness of breath with activity or when lying flat",
+      "Swelling in the legs, ankles, or abdomen",
+      "Rapid weight gain from fluid",
+      "Fatigue and reduced ability to exercise",
+      "Waking at night short of breath"
+    ],
+    "evaluation": [
+      "An echocardiogram to measure how well the heart pumps and how the valves work",
+      "Blood tests, including kidney function and markers of heart strain",
+      "A search for the cause, such as blocked arteries, valve disease, high blood pressure, or a weakened heart muscle",
+      "Regular review of weight, symptoms, and medications"
+    ],
+    "treatment": [
+      "Guideline-directed medications that strengthen the heart over time and reduce hospital stays",
+      "Diuretics to remove extra fluid",
+      "Treating the underlying cause, such as a blocked artery or a valve problem",
+      "Advanced therapies, devices, or transplant evaluation for heart failure that does not respond to standard care"
+    ]
+  },
+
+  "structural": {
+    "status": "draft",
+    "seoTitle": "Heart valve and structural heart disease care in Tampa",
+    "intro": "Structural heart disease covers problems with the heart's valves, walls, and chambers. Many can now be treated through a catheter placed in a blood vessel, without open-heart surgery, which often means a shorter recovery.",
+    "symptoms": [
+      "A heart murmur found during an exam",
+      "Shortness of breath, fatigue, or reduced stamina",
+      "Chest discomfort, dizziness, or fainting with exertion",
+      "Swelling in the legs",
+      "A stroke or mini-stroke that may be linked to a hole in the heart or to atrial fibrillation"
+    ],
+    "evaluation": [
+      "An echocardiogram, sometimes including a transesophageal echo for a closer view",
+      "Cardiac CT to measure the valve and plan any procedure",
+      "A review of overall health to weigh catheter-based treatment against surgery"
+    ],
+    "treatment": [
+      "Monitoring for valve disease that is mild and not causing symptoms",
+      "Transcatheter aortic valve replacement (TAVR) for a narrowed aortic valve",
+      "Transcatheter mitral repair (MitraClip) for a leaking mitral valve",
+      "ASD/PFO closure, and left atrial appendage closure (Watchman) to lower stroke risk in atrial fibrillation when blood thinners are a problem",
+      "Procedures are performed in a hospital, with evaluation and follow-up in the office"
+    ]
+  },
+
+  "imaging": {
+    "status": "draft",
+    "seoTitle": "Cardiac imaging: echocardiography and cardiac CT in Tampa",
+    "intro": "Cardiac imaging shows the heart's structure and function without surgery. The results guide diagnosis, help decide whether a procedure is needed, and plan it when it is.",
+    "symptoms": [
+      "A murmur, abnormal ECG, or symptoms that need a closer look",
+      "Known valve disease or heart failure that needs monitoring",
+      "Risk factors that call for a check of the coronary arteries",
+      "Planning for a structural heart procedure such as TAVR"
+    ],
+    "evaluation": [
+      "Echocardiography (heart ultrasound) to see the chambers, valves, and pumping strength",
+      "Stress echocardiography to see how the heart responds to exercise",
+      "Transesophageal echocardiography for detailed views of the valves",
+      "Coronary CT angiography and calcium scoring to look for plaque in the arteries"
+    ],
+    "treatment": [
+      "Imaging results are reviewed with you and used to shape the treatment plan",
+      "Repeat imaging tracks changes over time",
+      "Where each test is performed is confirmed when it is ordered"
+    ]
+  },
+
+  "prevention": {
+    "status": "draft",
+    "seoTitle": "Cholesterol and heart disease prevention in Tampa",
+    "intro": "Most heart attacks and strokes come from plaque that builds up over years. Lowering cholesterol and managing other risk factors early can slow that process and prevent a first event.",
+    "symptoms": [
+      "High LDL cholesterol or triglycerides on blood work",
+      "A family history of early heart disease",
+      "High blood pressure, diabetes, or smoking",
+      "Inherited cholesterol conditions, such as familial hypercholesterolemia or high lipoprotein(a)",
+      "A coronary calcium score that shows plaque"
+    ],
+    "evaluation": [
+      "A full lipid panel and, when useful, advanced tests such as lipoprotein(a)",
+      "A calculation of your 10-year cardiovascular risk",
+      "Coronary calcium scoring when it would change the treatment decision"
+    ],
+    "treatment": [
+      "A plan for diet, activity, weight, and blood pressure",
+      "Statins and other cholesterol-lowering medications, including newer options when statins are not enough or not tolerated",
+      "Regular follow-up to reach and keep your targets"
+    ]
+  },
+
+  "shock": {
+    "status": "draft",
+    "seoTitle": "Cardiogenic shock and mechanical circulatory support",
+    "intro": "Cardiogenic shock is an emergency in which the heart suddenly cannot pump enough blood to the body, most often after a large heart attack. It is treated in the hospital, sometimes with a temporary heart pump that supports the circulation while the heart recovers.",
+    "symptoms": [
+      "Severe shortness of breath and low blood pressure",
+      "Confusion, cold or clammy skin, and low urine output",
+      "It usually follows a heart attack or severe heart failure. Call 911 for these symptoms."
+    ],
+    "evaluation": [
+      "Emergency assessment in the hospital, including ECG, echocardiogram, and blood tests",
+      "Cardiac catheterization to find and treat a blocked artery"
+    ],
+    "treatment": [
+      "Opening the blocked artery as quickly as possible",
+      "Temporary mechanical support such as the Impella heart pump during high-risk procedures or recovery",
+      "Intensive care and medications to support blood pressure",
+      "Follow-up in the office after discharge"
+    ]
+  }
+}

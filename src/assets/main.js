@@ -66,3 +66,29 @@
     try { localStorage.setItem("hide-markers", on ? "1" : "0"); } catch {}
   });
 })();
+
+// Contact page: load the Google map only on request (no third-party request until then).
+(() => {
+  const btn = document.querySelector("[data-load-map]");
+  if (!btn) return;
+  btn.addEventListener("click", () => {
+    const box = btn.closest(".map-facade");
+    const f = document.createElement("iframe");
+    f.src = box.dataset.mapSrc;
+    f.title = "Map of the office location";
+    f.loading = "lazy";
+    f.referrerPolicy = "no-referrer-when-downgrade";
+    box.replaceChildren(f);
+    box.classList.add("is-loaded");
+  });
+})();
+
+// Analytics events: counts call, directions, and contact-card clicks when a cookie-free
+// analytics script (Plausible or Fathom) is configured. Does nothing otherwise.
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-event]");
+  if (!el) return;
+  const name = el.dataset.event;
+  if (typeof window.plausible === "function") window.plausible(name);
+  else if (window.fathom && typeof window.fathom.trackEvent === "function") window.fathom.trackEvent(name);
+});

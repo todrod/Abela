@@ -13,7 +13,12 @@
     "npi": { "value": "1659690337", "status": "public", "source": "[1,13]" },
     "license": { "value": "Florida ME136178", "status": "public", "source": "[7]", "note": "Clear/Active, expires 2028-01-31" },
     "languages": { "value": ["English"], "status": "public", "source": "[2]" },
-    "portrait": { "value": null, "status": "missing", "note": "Approved headshot required. Do not use scraped hospital photos." },
+    "portrait": {
+      "value": { "src": "assets/abela-portrait-placeholder.jpg", "alt": "Oliver G. Abela, MD, FACC", "width": 133, "height": 166 },
+      "status": "public",
+      "source": "BayCare physician directory [2]",
+      "note": "TEMPORARY placeholder, 133x166 px, from BayCare's public profile. Staging only. Replace with an approved high-resolution headshot (at least 1000 px tall) and confirm usage rights before setting to confirmed."
+    },
     "shortBio": {
       "value": "Oliver G. Abela, MD, FACC, is a Tampa cardiologist with fellowship training in cardiovascular disease, interventional cardiology, and advanced heart failure and transplant cardiology. His background includes complex coronary intervention, structural heart procedures, and cardiovascular imaging. He earned his medical degree at Michigan State University and completed postgraduate training in Michigan, Ohio, Nevada, and Arizona.",
       "status": "draft",
