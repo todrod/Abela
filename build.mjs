@@ -501,7 +501,11 @@ function buildAssets() {
   const jsMin = minifyJs(readFileSync(join(SRC, "main.js"), "utf8"));
   assets.js = `assets/${hashedName("main.js", jsMin)}`;
   writeFileSync(join(OUT, assets.js), jsMin);
-  copyFileSync(join(SRC, "favicon.svg"), join(OUT, "assets/favicon.svg"));
+  // Everything else (favicon, portrait and office photos) is copied as-is.
+  for (const f of readdirSync(SRC)) {
+    if (["styles.css", "main.js", "fonts"].includes(f) || statSync(join(SRC, f)).isDirectory()) continue;
+    copyFileSync(join(SRC, f), join(OUT, "assets", f));
+  }
 }
 
 // Tiny inline script: marks JS as available before first paint, so the mobile menu never flashes open.
