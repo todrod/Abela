@@ -33,6 +33,28 @@ Research date: November 6, 2026. Most sources are agency roundups and trend arti
 - **Closing call to action**: every interior page except Contact ends with a sand panel reading "Questions about your heart health?" with Call and Directions buttons.
 - **Scroll fade-ins** apply only to content below the first screen, so nothing visible at load ever fades in.
 
+## v3: design-skill review (Impeccable, Taste Skill, UI/UX Pro Max, Humanizer)
+The four skills were read as reference material, not installed or run. Changes made from their rules:
+
+| Rule | Source | Change |
+|---|---|---|
+| No small label (eyebrow) above headings | Impeccable craft floor (a ban) | Removed from every section and page header |
+| The h1 names the category and place; the brand line is used once and never as the h1 | Taste Skill copy rules | h1 is now "Cardiologist in Tampa, Florida". The tagline closes the homepage. |
+| Headings contain a noun; no question headings except FAQ entries | Taste Skill | "Common reasons for a visit", "Conditions treated", "Your first visit, step by step", "Appointments with Dr. Abela" |
+| Buttons are a verb plus an object; never "Learn more"; one wording for the main action | Taste Skill | "Call 813-873-0000" is identical in nav, hero, closing panel and mobile bar. "See all conditions", "See training and credentials". |
+| No same-size card grid as page structure | Impeccable | Conditions are now editorial rows with hairlines, and symptoms a plain link list |
+| No colored left border thicker than 1px | Impeccable | Removed from the credentials strip, care notes and emergency box |
+| Drawn icons, not text glyphs | Impeccable, UI/UX Pro Max | One SVG icon set (arrow, phone, map pin) on a 24px grid with a 1.75 stroke |
+| One motion moment, not a fade-in on every section | Impeccable | Scroll fade-ins removed. The heart-rhythm line draws once. Hover and press states use one exponential ease-out. |
+| Flat grounds for a service business | Taste Skill | Gradients removed. Sand and white grounds, with navy as the single brand band. |
+| A chosen display face, self-hosted | Impeccable | Source Serif 4 and Source Sans 3 |
+| Theme the browser's own surfaces | Impeccable | Text selection, caret, scrollbar, accent color, focus ring, tabular numerals |
+| Contrast of at least 4.5:1 for text | Impeccable, UI/UX Pro Max | Every text and background pair measured; the lowest is 4.68:1 |
+| The same action never twice on one screen | Taste Skill | The mobile call bar appears only after the hero buttons scroll away |
+| Plain sentences, no inflated or "not X but Y" phrasing | Humanizer | Rewrote the hero sub-line and the heart failure, imaging, prevention, structural and cardiogenic shock descriptions |
+
+UI/UX Pro Max's "Medical Clinic" profile (trust and authority, accessible, booking and insurance info as must-haves) matched the existing direction. Booking and insurance stay in `CONTENT-GAPS.md` until the practice supplies them.
+
 ## Next design upgrades once assets arrive
 - An approved portrait replaces the "OA" monogram panel, which is the single biggest gain in warmth and trust. The hero chip will sit over the photo.
 - Real office photography (exterior, waiting room) on the Contact page helps first-time visitors recognize the building.

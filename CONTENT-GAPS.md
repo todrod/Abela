@@ -25,7 +25,7 @@ A production build includes **only** fields with `"status": "confirmed"`. To pub
 | `faq[2]` | Do I need a referral? |  |  |
 | `faq[3]` | Which insurance plans are accepted? |  |  |
 
-## Public record: needs practice confirmation (56)
+## Public record: needs practice confirmation (57)
 These appear in staging with an "Unverified" marker.
 
 | Field | Content | Source | Note |
@@ -35,8 +35,9 @@ These appear in staging with an "Unverified" marker.
 | `physician.license` | Florida ME136178 | [7] | Clear/Active, expires 2028-01-31 |
 | `physician.languages` |  | [2] |  |
 | `physician.shortBio` | Oliver G. Abela, MD, FACC, is a Tampa cardiologist with fellowship training in c | Draft copy, handoff section 8 | Editorial draft. Needs physician approval. |
-| `brand.tagline` | Advanced heart care. A clear plan forward. | Editorial recommendation, handoff section 8 |  |
-| `brand.supportingLine` | Tampa cardiology with expertise in coronary disease, advanced heart failure, and | Editorial recommendation, handoff section 8 |  |
+| `brand.headline` | Cardiologist in Tampa, Florida | [1,2] | Page h1. Names the specialty and city, per the plain-copy rule. |
+| `brand.tagline` | Advanced heart care. A clear plan forward. | Editorial recommendation, handoff section 8 | Brand line. Used once per page at most, never as the h1. |
+| `brand.supportingLine` | Evaluation and treatment for coronary artery disease, advanced heart failure, an | Editorial, adapted from handoff section 8 |  |
 | `practice.name` | Abela Heart and Vascular Center | [3,4] | Candidate brand. Confirm spelling, ownership, and relationship with Tampa Heart & Vascular Associates. |
 | `practice.legalEntity` | AHVC, LLC | [5] | Confirm the legal footer name. |
 | `practice.groupAffiliation` | Tampa Heart & Vascular Associates | [1] | The public directory associates the Suite 800 address with this group. Confirm the relationship. |

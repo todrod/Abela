@@ -12,6 +12,16 @@ npm run serve                # preview dist/ at http://localhost:8080
 
 Requires Node 18+. There is nothing to install.
 
+## What the build produces
+
+- **Minified, fingerprinted assets.** CSS and JS are minified and named by content hash (`styles.<hash>.css`), so hosts can cache them for a year without serving stale files.
+- **Self-hosted fonts.** Source Serif 4 and Source Sans 3 (SIL OFL 1.1), Latin subset, variable weight, about 78 KB together. They are preloaded and use metric-matched fallbacks so text does not jump while loading. No third-party requests are made.
+- **Compact HTML.** Indentation and blank lines are stripped.
+- **`_headers`.** This is for Netlify or Cloudflare Pages; on another host, copy the same values into its server config. It sets a strict Content-Security-Policy (the one inline script is allowed by hash), long-lived caching for `/assets/*`, and `nosniff`, `Referrer-Policy` and `Permissions-Policy`.
+- **`robots.txt` and sitemap.** Production gets an allow-all `robots.txt`, plus `sitemap.xml` once `site.url` is confirmed. Staging gets disallow-all.
+- **Production guard.** The build fails if any staging marker (badge, placeholder, banner, `noindex`) would reach production output.
+- **Size report.** Each build prints page, asset and font sizes, plus the compressed first-load weight of the home page (about 85 KB).
+
 ## How verification works
 
 Each fact in `content/site.json` has a `status`:
@@ -37,11 +47,11 @@ To publish a fact: confirm it with the practice, set `"status": "confirmed"`, th
 ```
 content/site.json     single editable content record (with sources and notes)
 build.mjs             page templates and build logic
-src/assets/           styles.css, main.js (mobile menu), favicon.svg
+src/assets/           styles.css, main.js (mobile menu + call bar), favicon.svg, fonts/
 CONTENT-GAPS.md       generated checklist of unconfirmed or missing content
 ```
 
-Pages: Home, Meet Dr. Abela, Areas of Care, Research & Publications, Patient Information, Contact & Directions.
+Pages: Home, About Dr. Abela, Conditions, Research, Patients, Contact.
 
 ## Deliberately not included
 

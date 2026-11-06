@@ -15,15 +15,12 @@
   });
 })();
 
-// Fade sections in as they scroll into view. Anything already on screen at load is shown
-// immediately, so content never "pops in" above the fold. CSS skips this under reduced motion.
+
+// Mobile call bar: on pages with hero buttons, show it only once those buttons scroll out of view,
+// so the same action never appears twice on one screen.
 (() => {
-  const els = [...document.querySelectorAll(".reveal")];
-  if (!("IntersectionObserver" in window)) return;
-  els.forEach((el) => { if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("in"); });
-  document.documentElement.classList.add("reveal-on");
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-  }, { rootMargin: "0px 0px -8% 0px" });
-  els.filter((el) => !el.classList.contains("in")).forEach((el) => io.observe(el));
+  const bar = document.querySelector(".mobile-bar");
+  const heroActions = document.querySelector(".hero .actions");
+  if (!bar || !heroActions || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(([e]) => bar.classList.toggle("is-hidden", e.isIntersecting)).observe(heroActions);
 })();
