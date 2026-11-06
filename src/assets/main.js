@@ -24,3 +24,17 @@
   if (!bar || !heroActions || !("IntersectionObserver" in window)) return;
   new IntersectionObserver(([e]) => bar.classList.toggle("is-hidden", e.isIntersecting)).observe(heroActions);
 })();
+
+// Motion hooks: pause the hero heartbeat when it is off screen; draw the visit steps when they arrive.
+(() => {
+  if (!("IntersectionObserver" in window)) {
+    document.querySelectorAll(".steps").forEach((s) => s.classList.add("in-view"));
+    return;
+  }
+  const hero = document.querySelector(".hero.on-dark");
+  if (hero) new IntersectionObserver(([e]) => hero.classList.toggle("is-offscreen", !e.isIntersecting)).observe(hero);
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in-view"); io.unobserve(e.target); } });
+  }, { threshold: 0.35 });
+  document.querySelectorAll(".steps").forEach((s) => io.observe(s));
+})();

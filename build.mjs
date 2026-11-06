@@ -60,6 +60,26 @@ const ICONS = {
 const icon = (n, cls = "icon") =>
   `<svg class="${cls}" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
 
+// Condition pictograms: same grid and stroke as ICONS, drawn for this site.
+const CONDITION_ICONS = {
+  coronary: '<path d="M12 20.5s-7.5-4.6-7.5-10.4A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 7.5 2.7c0 5.8-7.5 10.4-7.5 10.4z"/><path d="M8 11.5h2.5l1.2-2.5 1.6 5 1.2-2.5H16"/>',
+  "heart-failure": '<path d="M12 20.5s-7.5-4.6-7.5-10.4A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 7.5 2.7c0 5.8-7.5 10.4-7.5 10.4z"/><path d="M12 10.5c-1.3 1.6-2 2.7-2 3.6a2 2 0 0 0 4 0c0-.9-.7-2-2-3.6z"/>',
+  structural: '<circle cx="12" cy="12" r="8.5"/><path d="M12 12V3.5M12 12l-7.4 4.3M12 12l7.4 4.3"/>',
+  imaging: '<rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M6 11h2.5l1.5-3 2 6 1.5-3H18M9 20h6M12 16.5V20"/>',
+  prevention: '<path d="M12 3.5l7 2.6v5.4c0 4.4-3 7.7-7 9-4-1.3-7-4.6-7-9V6.1z"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4"/>',
+  shock: '<circle cx="12" cy="12" r="8.5"/><path d="M13 6.5l-4 6.3h3.6L11 17.5l4-6.3h-3.6z"/>',
+  pe: '<path d="M12 4v7M12 11c-1.5 1-3 1.5-4.5 1.5M12 11c1.5 1 3 1.5 4.5 1.5"/><path d="M8.5 7.5C5.5 8 4 12 4 15.5 4 18 5 19.5 7 19.5S10 18 10 15v-3M15.5 7.5c3 .5 4.5 4.5 4.5 8 0 2.5-1 4-3 4s-3-1.5-3-4.5v-3"/>',
+};
+const conditionIcon = (id) =>
+  CONDITION_ICONS[id]
+    ? `<span class="cond-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CONDITION_ICONS[id]}</svg></span>`
+    : "";
+
+/** The site's signature motif: a heart-rhythm trace. `pulse` adds the travelling beat. */
+const ECG_PATH = "M0 120 H640 l22 -16 l16 16 H720 l16 -92 l20 156 l18 -104 l12 40 H860 l24 -22 l20 22 H1200";
+const ecg = (cls, pulse = false) =>
+  `<svg class="${cls}" aria-hidden="true" viewBox="0 0 1200 200" preserveAspectRatio="none"><path class="ecg-base" pathLength="1" d="${ECG_PATH}"/>${pulse ? `<path class="ecg-pulse" pathLength="1" d="${ECG_PATH}"/>` : ""}</svg>`;
+
 // ---------- page registry (pages with no renderable content drop out of nav) ----------
 const pages = [];
 const page = (file, navLabel, title, description, body) => {
@@ -91,11 +111,9 @@ const portrait = () => {
   const p = v(C.physician.portrait);
   if (p)
     return `<figure class="hero-figure"><img class="portrait" src="${esc(p.src)}" alt="${esc(p.alt || name)}" width="560" height="700" fetchpriority="high" decoding="async"></figure>`;
-  // Stand-in until an approved headshot exists. The heart-rhythm line is the page's one motion moment.
-  return `<figure class="hero-figure" aria-hidden="true"><div class="portrait-placeholder">
-<svg class="ecg" viewBox="0 0 400 120" preserveAspectRatio="none"><path pathLength="1" d="M0 70 H120 l14 -10 l10 10 H170 l10 -52 l14 92 l12 -60 l8 20 H260 l16 -14 l14 14 H400"/></svg>
-${PRODUCTION ? "" : "<small>Approved headshot pending</small>"}
-</div></figure>`;
+  // Stand-in until an approved headshot exists. Production omits it and the headline takes the full width.
+  if (PRODUCTION) return "";
+  return `<figure class="hero-figure" aria-hidden="true"><div class="portrait-placeholder"><small>Approved headshot pending</small></div></figure>`;
 };
 
 function trustStrip() {
@@ -152,7 +170,8 @@ function closing({ brand = false } = {}) {
   const heading = brand && tagline ? `${esc(tagline)}${flag(C.brand.tagline)}` : `Appointments with ${esc(shortName)}`;
   return `
 <section class="closing" aria-labelledby="close-h">
-<div class="wrap closing-inner">
+<div class="wrap closing-inner on-dark">
+${ecg("band-ecg")}
 <div>
 <h2 id="close-h">${heading}</h2>
 ${addr ? `<address>${addrLines(addr).map(esc).join("<br>")}${flag(C.contact.address)}</address>` : ""}
@@ -177,8 +196,9 @@ ${addr ? `<address>${addrLines(addr).map(esc).join("<br>")}${flag(C.contact.addr
     name,
     support || `${name}, cardiologist in Tampa, Florida.`,
     `
-<section class="hero">
-<div class="wrap hero-grid">
+<section class="hero on-dark">
+${ecg("hero-ecg", true)}
+<div class="wrap hero-grid${portrait() ? " has-media" : ""}">
 <div class="hero-copy">
 <h1>${headline ? esc(headline) + flag(C.brand.headline) : esc(name)}</h1>
 ${headline ? `<p class="hero-name">${esc(name)}${practiceName ? `<span> · ${esc(practiceName)}${flag(C.practice.name)}</span>` : ""}</p>` : ""}
@@ -190,7 +210,7 @@ ${addr ? `<li>${icon("pin")}<span>${esc(addrLines(addr).join(", "))}${flag(C.con
 ${v(C.practice.acceptingNewPatients) ? `<li><span class="dot" aria-hidden="true"></span><span>Accepting new patients${flag(C.practice.acceptingNewPatients)}</span></li>` : ""}
 </ul>
 </div>
-<div class="hero-media">${portrait()}</div>
+${portrait() ? `<div class="hero-media">${portrait()}</div>` : ""}
 </div>
 </section>
 ${trustStrip()}
@@ -215,6 +235,7 @@ ${textLink("care.html", "See all conditions")}
 </div>
 <ul class="conditions" role="list">
 ${areas.map((a) => `<li>
+${conditionIcon(a.id)}
 <h3><a href="care.html#${a.id}">${esc(a.title)}</a>${flag(a)}</h3>
 <p>${esc(a.summary)}</p>
 <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
@@ -224,7 +245,8 @@ ${areas.map((a) => `<li>
 </section>` : ""}
 ${stepsSection()}
 ${bio ? `
-<section class="section section-navy" aria-labelledby="meet-h">
+<section class="section section-navy on-dark" aria-labelledby="meet-h">
+${ecg("band-ecg")}
 <div class="wrap meet">
 <h2 id="meet-h">About ${esc(shortName)}</h2>
 <div>
@@ -252,7 +274,7 @@ ${closing({ brand: true })}
   const body =
     bio || training.length || creds.length
       ? `
-<header class="page-head"><div class="wrap">
+<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
 <h1>${esc(name)}</h1>
 ${bio ? `<p class="lede">${esc(bio)}${flag(C.physician.shortBio)}</p>` : ""}
 </div></header>
@@ -304,7 +326,7 @@ ${langs ? `<p class="muted small">Languages: ${langs.map(esc).join(", ")}${flag(
     `Heart conditions evaluated and treated by ${name} in Tampa.`,
     areas.length
       ? `
-<header class="page-head"><div class="wrap">
+<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
 <h1>Conditions ${esc(shortName)} treats</h1>
 <p class="lede">Each condition below notes where care happens. Office visits cover evaluation, planning, and follow-up. Procedures take place in a hospital.</p>
 <nav class="jump" aria-label="Conditions on this page"><ul role="list">${areas.map((a) => `<li><a href="#${a.id}">${esc(a.title)}</a></li>`).join("")}</ul></nav>
@@ -313,7 +335,7 @@ ${langs ? `<p class="muted small">Languages: ${langs.map(esc).join(", ")}${flag(
 ${areas.map((a) => `
 <section class="care-item" id="${a.id}" aria-labelledby="${a.id}-h">
 <div class="care-head">
-<h2 id="${a.id}-h">${esc(a.title)}${flag(a)}</h2>
+${conditionIcon(a.id)}<h2 id="${a.id}-h">${esc(a.title)}${flag(a)}</h2>
 <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
 </div>
 <p class="care-summary">${esc(a.summary)}</p>
@@ -338,7 +360,7 @@ ${emergencyNote()}
     `Clinical research and selected publications by ${name}.`,
     trials.length || pubs.length
       ? `
-<header class="page-head"><div class="wrap">
+<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
 <h1>Research and publications</h1>
 <p class="lede">A selection of ${esc(shortName)}'s clinical trial work and published papers. This is not a complete bibliography.</p>
 </div></header>
@@ -387,7 +409,7 @@ ${achievements.length ? `<section class="block"><h2>Notable work</h2><ul class="
     `What to expect and what to bring to your visit with ${name}.`,
     bring || insurance || links.length || list(C.faq).length || !PRODUCTION
       ? `
-<header class="page-head"><div class="wrap">
+<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
 <h1>Preparing for your visit</h1>
 <p class="lede">What happens at a first visit, what to bring, and answers to common questions.</p>
 </div></header>
@@ -425,7 +447,7 @@ ${faqSection({ id: "faq" })}`
     `Office location, telephone, and directions for ${name}.`,
     addr || phone || !PRODUCTION
       ? `
-<header class="page-head"><div class="wrap">
+<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
 <h1>Office location and phone</h1>
 </div></header>
 <div class="wrap prose-grid">

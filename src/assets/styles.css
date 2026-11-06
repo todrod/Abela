@@ -162,16 +162,10 @@ main:focus { outline: none; }
 .hero-figure { margin: 0 auto; width: 100%; max-width: 400px; }
 .portrait { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 20px; }
 .portrait-placeholder {
-  position: relative; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; background: var(--navy);
-  display: grid; place-items: end center; padding: 1.25rem; color: rgba(255, 255, 255, .7);
+  aspect-ratio: 4 / 5; border-radius: 20px; border: 1.5px dashed rgba(255, 255, 255, .35);
+  display: grid; place-items: center; padding: 1.25rem; color: rgba(255, 255, 255, .7); text-align: center;
 }
-.portrait-placeholder small { position: relative; font-size: .8rem; letter-spacing: .02em; }
-.ecg { position: absolute; inset: 38% 0 auto; width: 100%; height: 30%; }
-.ecg path { fill: none; stroke: #f0a58f; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; stroke-dasharray: 1; stroke-dashoffset: 0; }
-@media (prefers-reduced-motion: no-preference) {
-  .ecg path { stroke-dashoffset: 1; animation: ecg-draw 2.2s .25s var(--ease) forwards; }
-}
-@keyframes ecg-draw { to { stroke-dashoffset: 0; } }
+.portrait-placeholder small { font-size: .85rem; }
 @media (max-width: 959px) { .hero-media { display: none; } }
 
 /* ---------- credentials strip ---------- */
@@ -352,3 +346,105 @@ main:focus { outline: none; }
   .site-header, .staging-banner, .nav-toggle, .actions, .mobile-bar { display: none; }
   body { background: #fff; padding: 0; }
 }
+
+/* =====================================================================
+   Pop layer: dark bookends, the heartbeat motif, and purposeful motion.
+   Everything here amplifies what the system already owns (navy, clay,
+   serif display, the heart-rhythm trace). Motion respects reduced-motion.
+   ===================================================================== */
+.on-dark { --on-dark-text: #d3dee9; color: var(--on-dark-text); }
+.on-dark h1, .on-dark h2, .on-dark h3 { color: #fff; }
+.on-dark .lede, .on-dark p { color: var(--on-dark-text); }
+.on-dark a:not(.btn) { color: #fff; }
+.on-dark .flag { background: #3a2c10; color: #ffd27a; border-color: #8a6a2a; }
+.on-dark :focus-visible { box-shadow: 0 0 0 3px var(--navy), 0 0 0 5px #fff; }
+.on-dark .btn-primary { background: var(--clay); color: #fff; box-shadow: 0 6px 18px rgba(168, 71, 47, .35); }
+.on-dark .btn-primary:hover { background: #b9573d; color: #fff; box-shadow: 0 10px 26px rgba(168, 71, 47, .45); }
+.on-dark .btn-secondary { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .45); }
+.on-dark .btn-secondary:hover { background: rgba(255, 255, 255, .08); border-color: #fff; color: #fff; }
+
+/* Hero */
+.hero.on-dark {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: radial-gradient(80% 90% at 85% 10%, #234d78 0%, transparent 60%), var(--navy);
+  padding: clamp(3rem, 8vw, 6.5rem) 0 clamp(7rem, 12vw, 10rem);
+}
+.hero.on-dark .hero-grid { position: relative; z-index: 1; }
+.hero-grid:not(.has-media) { grid-template-columns: 1fr; }
+.hero.on-dark h1 { font-size: clamp(2.6rem, 1.6rem + 4.6vw, 5rem); max-width: 15ch; }
+.hero.on-dark .hero-name { color: #fff; }
+.hero.on-dark .hero-name span { color: var(--on-dark-text); }
+.hero.on-dark .lede { max-width: 48ch; }
+.hero.on-dark .hero-facts { color: var(--on-dark-text); }
+.hero.on-dark .hero-facts .icon { color: #f0a58f; }
+.hero.on-dark .dot { background: #5fd39a; box-shadow: 0 0 0 4px rgba(95, 211, 154, .2); }
+
+.hero-ecg { position: absolute; left: 0; right: 0; bottom: clamp(2.5rem, 5vw, 4rem); width: 100%; height: clamp(90px, 14vw, 180px); z-index: 0; pointer-events: none; }
+.hero-ecg path { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.ecg-base { stroke: rgba(240, 165, 143, .45); stroke-width: 2; }
+/* Dash values run past 1 because a stretched, non-scaling stroke can measure longer than its pathLength. */
+.hero-ecg .ecg-base { stroke-dasharray: 2; stroke-dashoffset: 0; }
+.ecg-pulse { stroke: #ffd2c4; stroke-width: 3; stroke-dasharray: .06 2; stroke-dashoffset: 1.1; opacity: 0; filter: drop-shadow(0 0 6px rgba(255, 170, 140, .9)); }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-ecg .ecg-base { stroke-dashoffset: 2; animation: ecg-draw 2.4s .2s var(--ease) forwards; }
+  .hero-ecg .ecg-pulse { animation: ecg-beat 3.6s 2.4s cubic-bezier(.45, 0, .25, 1) infinite; }
+  .hero.is-offscreen .ecg-pulse { animation-play-state: paused; }
+  .hero.on-dark .hero-copy > * { animation: rise .9s var(--ease) both; }
+  .hero.on-dark .hero-copy > :nth-child(2) { animation-delay: .08s; }
+  .hero.on-dark .hero-copy > :nth-child(3) { animation-delay: .16s; }
+  .hero.on-dark .hero-copy > :nth-child(4) { animation-delay: .24s; }
+  .hero.on-dark .hero-copy > :nth-child(n+5) { animation-delay: .32s; }
+}
+@keyframes ecg-draw { to { stroke-dashoffset: 0; } }
+@keyframes ecg-beat { 0% { stroke-dashoffset: 1.1; opacity: 0; } 8% { opacity: 1; } 85% { opacity: 1; } 100% { stroke-dashoffset: -.15; opacity: 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+
+/* Credentials float over the hero's lower edge */
+.on-dark + .trust { position: relative; z-index: 2; background: transparent; border: 0; margin-top: calc(-1 * clamp(4.5rem, 8vw, 6rem)); }
+.on-dark + .trust .trust-list { background: var(--surface); border-radius: 20px; padding-inline: clamp(.5rem, 2vw, 1rem); box-shadow: 0 2px 4px rgba(21, 33, 47, .06), 0 24px 48px -12px rgba(21, 33, 47, .25); }
+.on-dark + .trust .trust-list li { padding: 1.5rem 1.25rem; }
+.page-head.on-dark + .trust { margin-bottom: clamp(2rem, 5vw, 3rem); }
+
+/* Condition pictograms */
+.cond-icon { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--clay-soft); color: var(--clay); flex: none; transition: transform .35s var(--ease), background-color .25s var(--ease), color .25s var(--ease); }
+.conditions li { grid-template-columns: auto 1fr; column-gap: 1.1rem; }
+.conditions li > :not(.cond-icon) { grid-column: 2; }
+.conditions li > .cond-icon { grid-row: 1 / span 3; }
+.conditions li:hover .cond-icon { transform: translateY(-2px) rotate(-4deg); background: var(--clay); color: #fff; }
+.care-head .cond-icon { width: 44px; height: 44px; }
+
+/* Symptom rows: a sand sweep on hover */
+.link-list a { position: relative; isolation: isolate; padding-inline: .75rem; }
+.link-list a::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--sand); border-radius: 10px; transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease); }
+.link-list a:hover::before { transform: scaleX(1); }
+
+/* Steps draw their connector when they scroll in */
+@media (prefers-reduced-motion: no-preference) {
+  .js .steps:not(.in-view) .step-n { transform: scale(.6); opacity: 0; }
+  .js .steps:not(.in-view) li::after { transform: scaleX(0); }
+  .js .steps .step-n { transition: transform .6s var(--ease), opacity .4s var(--ease); }
+  .js .steps li::after { transform-origin: left; transition: transform .9s var(--ease); }
+  .js .steps li:nth-child(2) .step-n { transition-delay: .35s; }
+  .js .steps li:nth-child(3) .step-n { transition-delay: .7s; }
+  .js .steps li:nth-child(1)::after { transition-delay: .15s; }
+  .js .steps li:nth-child(2)::after { transition-delay: .5s; }
+}
+.steps li::after { background: linear-gradient(90deg, var(--clay), var(--line-strong)) !important; height: 2px !important; }
+
+/* Brand band and closing panel carry a quiet trace */
+.section-navy, .closing-inner { position: relative; overflow: hidden; isolation: isolate; }
+.band-ecg { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 55%; z-index: -1; pointer-events: none; opacity: .5; }
+.band-ecg path, .head-ecg path { fill: none; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.band-ecg .ecg-base, .head-ecg .ecg-base { stroke: rgba(240, 165, 143, .3); stroke-width: 1.5; }
+.closing-inner.on-dark { background: radial-gradient(70% 120% at 100% 0%, #234d78 0%, transparent 60%), var(--navy); }
+.closing-inner.on-dark address { color: var(--on-dark-text); }
+
+/* Interior page heads go dark to match the hero */
+.page-head.on-dark { position: relative; overflow: hidden; isolation: isolate; background: radial-gradient(70% 120% at 100% 0%, #234d78 0%, transparent 60%), var(--navy); border-bottom: 0; padding-bottom: clamp(3rem, 6vw, 4.5rem); }
+.head-ecg { position: absolute; left: 0; right: 0; bottom: .5rem; width: 100%; height: 70px; z-index: -1; pointer-events: none; }
+.page-head.on-dark .jump a { background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .3); color: #fff; }
+.page-head.on-dark .jump a:hover { background: #fff; color: var(--navy); border-color: #fff; }
+
+/* Keep the trace clear of text: right side, below the buttons */
+.closing-inner .band-ecg { left: 38%; width: 62%; height: 42%; }
+.section-navy .band-ecg { left: 30%; width: 70%; height: 40%; opacity: .4; }

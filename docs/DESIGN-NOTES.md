@@ -55,6 +55,20 @@ The four skills were read as reference material, not installed or run. Changes m
 
 UI/UX Pro Max's "Medical Clinic" profile (trust and authority, accessible, booking and insurance info as must-haves) matched the existing direction. Booking and insurance stay in `CONTENT-GAPS.md` until the practice supplies them.
 
+## v4: pop layer
+The goal was more energy without leaving the established look, following Impeccable's `bolder` and `delight` guidance: amplify what the system already owns (navy, clay, serif display, the heart-rhythm trace) rather than add new colors, fonts or effects.
+
+- **Dark hero.** Full-width navy hero with the headline in white at up to 5rem. Text enters with a short staggered rise.
+- **Heartbeat motif.** The heart-rhythm trace runs the full hero width and draws on load. A glowing pulse then travels along it every 3.6 seconds. The pulse pauses when the hero is off screen.
+- **Clay buttons on dark sections.** The main action becomes warm clay with a soft glow on every dark surface: the hero, the closing panel and page headers.
+- **Floating credentials.** The credentials panel overlaps the hero's lower edge, which adds depth.
+- **Condition pictograms.** Six drawn icons on the same 24px grid as the rest of the icon set. On hover the icon tile fills with clay and tilts slightly.
+- **Symptom rows.** A sand background sweeps in from the left on hover.
+- **Visit steps.** The numbered circles pop in and the clay connector line draws between them when the section scrolls into view.
+- **Dark bookends.** Interior page headers and the closing panel are navy, carrying a quiet static trace kept clear of text.
+
+Every animation is disabled under `prefers-reduced-motion`, and content is fully visible without JavaScript. The production build with no confirmed facts still renders a complete hero.
+
 ## Next design upgrades once assets arrive
 - An approved portrait replaces the "OA" monogram panel, which is the single biggest gain in warmth and trust. The hero chip will sit over the photo.
 - Real office photography (exterior, waiting room) on the Contact page helps first-time visitors recognize the building.
