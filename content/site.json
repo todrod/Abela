@@ -231,6 +231,36 @@
     ]
   },
 
+  "highlights": [
+    { "label": "Board certified", "detail": "Four ABIM certifications, including interventional cardiology and advanced heart failure", "status": "public", "source": "[2]" },
+    { "label": "FACC", "detail": "Fellow of the American College of Cardiology", "status": "public", "source": "[10]" },
+    { "label": "Three fellowships", "detail": "Cardiovascular disease, interventional cardiology, and advanced heart failure", "status": "public", "source": "[1,8]" },
+    { "label": "Clinical researcher", "detail": "Heart failure trial investigator and published author", "status": "public", "source": "[11,14]" }
+  ],
+
+  "symptoms": [
+    { "label": "Chest pain or pressure", "area": "coronary", "status": "public", "source": "Editorial" },
+    { "label": "Shortness of breath or leg swelling", "area": "heart-failure", "status": "public", "source": "Editorial" },
+    { "label": "A heart murmur or valve problem", "area": "structural", "status": "public", "source": "Editorial" },
+    { "label": "High cholesterol or a family history", "area": "prevention", "status": "public", "source": "Editorial" },
+    { "label": "An abnormal heart test result", "area": "imaging", "status": "public", "source": "Editorial" },
+    { "label": "Told you may need a stent or valve procedure", "area": "structural", "status": "public", "source": "Editorial" }
+  ],
+
+  "visitSteps": [
+    { "title": "Call the office", "text": "Tell the staff what is going on and whether another doctor referred you.", "status": "public", "source": "Editorial", "note": "Confirm the intake process." },
+    { "title": "Your first visit", "text": "Your symptoms, history, medications, and any prior test results are reviewed together.", "status": "public", "source": "Editorial" },
+    { "title": "A clear plan", "text": "You leave knowing the next steps, whether that is testing, treatment, or planning for a procedure.", "status": "public", "source": "Editorial" }
+  ],
+
+  "faq": [
+    { "q": "Should I call 911 instead?", "a": "Yes, call 911 if you have chest pain, severe shortness of breath, fainting, or other symptoms that could be a heart attack or stroke. The office and this website are not for emergencies.", "status": "confirmed" },
+    { "q": "Are heart procedures done in the office?", "a": "No. Catheter-based procedures such as stents, and structural heart procedures such as TAVR, are performed in a hospital. Office visits are for evaluation, planning, and follow-up.", "status": "public", "source": "Editorial" },
+    { "q": "Do I need a referral?", "a": null, "status": "missing" },
+    { "q": "Which insurance plans are accepted?", "a": null, "status": "missing" },
+    { "q": "What should I bring to my first visit?", "a": "Your ID and insurance card, a list of your medications, and any recent test results or hospital records. The Patient Information page has the full list.", "status": "public", "source": "Editorial" }
+  ],
+
   "patientInfo": {
     "whatToBring": {
       "value": [

@@ -74,8 +74,16 @@ const settingLabel = {
 
 const portrait = () => {
   const p = v(C.physician.portrait);
-  if (p) return `<img class="portrait" src="${esc(p.src)}" alt="${esc(p.alt || name)}" width="560" height="700" loading="eager" decoding="async">`;
-  return `<div class="portrait portrait-placeholder" role="img" aria-label="Portrait coming soon"><span aria-hidden="true">OA</span>${PRODUCTION ? "" : '<small>Approved headshot pending</small>'}</div>`;
+  const creds = list(C.credentials);
+  const chip = creds.length
+    ? `<div class="hero-chip" aria-hidden="true"><strong>FACC</strong><span>ABIM board certified</span></div>`
+    : "";
+  if (p) return `<figure class="hero-figure"><img class="portrait" src="${esc(p.src)}" alt="${esc(p.alt || name)}" width="560" height="700" loading="eager" decoding="async">${chip}</figure>`;
+  return `<figure class="hero-figure" aria-hidden="true"><div class="portrait-placeholder">
+    <svg class="ecg" viewBox="0 0 400 120" preserveAspectRatio="none"><path pathLength="1" d="M0 70 H120 l14 -10 l10 10 H170 l10 -52 l14 92 l12 -60 l8 20 H260 l16 -14 l14 14 H400"/></svg>
+    <span class="mono">OA</span>
+    ${PRODUCTION ? "" : "<small>Approved headshot pending</small>"}
+  </div>${chip}</figure>`;
 };
 
 // ---------- Home ----------
@@ -83,7 +91,13 @@ const portrait = () => {
   const tagline = v(C.brand.tagline);
   const support = v(C.brand.supportingLine);
   const areas = list(C.areasOfCare).slice(0, 6);
+  const areaIds = new Set(list(C.areasOfCare).map((a) => a.id));
+  const symptoms = list(C.symptoms).filter((s) => areaIds.has(s.area));
+  const highlights = list(C.highlights);
+  const steps = list(C.visitSteps);
+  const faq = list(C.faq).filter((f) => f.a);
   const bio = v(C.physician.shortBio);
+  const arrow = '<span class="arrow" aria-hidden="true">→</span>';
 
   page(
     "index.html",
@@ -105,12 +119,31 @@ const portrait = () => {
   </div>
 </section>
 
+${highlights.length ? `
+<section class="trust" aria-label="Credentials at a glance">
+  <ul class="wrap trust-list" role="list">
+    ${highlights.map((h) => `<li><strong>${esc(h.label)}${flag(h)}</strong><span>${esc(h.detail)}</span></li>`).join("")}
+  </ul>
+</section>` : ""}
+
+${symptoms.length ? `
+<section class="section reveal">
+  <div class="wrap">
+    <p class="eyebrow">Start here</p>
+    <h2>What brings you in?</h2>
+    <p class="section-intro">Choose what sounds closest to your situation to see how ${esc(shortName)} can help.</p>
+    <ul class="symptoms" role="list">
+      ${symptoms.map((s) => `<li><a href="care.html#${s.area}"><span>${esc(s.label)}</span>${arrow}</a>${flag(s)}</li>`).join("")}
+    </ul>
+  </div>
+</section>` : ""}
+
 ${areas.length ? `
-<section class="section">
+<section class="section section-sand reveal">
   <div class="wrap">
     <div class="section-head">
-      <h2>Areas of care</h2>
-      <a class="text-link" href="care.html">All areas of care <span aria-hidden="true">→</span></a>
+      <div><p class="eyebrow">Areas of care</p><h2>Focused on the full range of heart care</h2></div>
+      <a class="text-link" href="care.html">All areas of care ${arrow}</a>
     </div>
     <ul class="cards" role="list">
       ${areas.map((a) => `
@@ -118,25 +151,47 @@ ${areas.length ? `
         <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
         <h3><a href="care.html#${a.id}">${esc(a.title)}</a>${flag(a)}</h3>
         <p>${esc(a.summary)}</p>
+        <span class="card-more" aria-hidden="true">Learn more ${arrow}</span>
       </li>`).join("")}
     </ul>
   </div>
 </section>` : ""}
 
-<section class="section section-tint">
-  <div class="wrap split">
-    <div>
-      <h2>Office care and hospital care</h2>
-      <p>Most patients start with an office visit. That visit covers your symptoms, history, medications, and test results, and ends with a plan. Catheter-based and structural heart procedures are done in a hospital, not in the office. If you need one, the office will explain where it will happen and what to expect.</p>
-    </div>
-    ${bio ? `
-    <div>
-      <h2>Meet ${esc(shortName)}</h2>
-      <p>${esc(bio)}${flag(C.physician.shortBio)}</p>
-      <a class="text-link" href="about.html">Training and credentials <span aria-hidden="true">→</span></a>
-    </div>` : ""}
+${steps.length ? `
+<section class="section reveal">
+  <div class="wrap">
+    <p class="eyebrow">What to expect</p>
+    <h2>From first call to a clear plan</h2>
+    <ol class="steps" role="list">
+      ${steps.map((s, i) => `<li><span class="step-n" aria-hidden="true">${i + 1}</span><h3>${esc(s.title)}${flag(s)}</h3><p>${esc(s.text)}</p></li>`).join("")}
+    </ol>
+    <p class="steps-note">Procedures such as stents and valve replacement happen in a hospital, not in the office. If you need one, the office will explain where and what to expect.</p>
   </div>
-</section>
+</section>` : ""}
+
+${bio ? `
+<section class="section section-navy reveal">
+  <div class="wrap meet">
+    <div class="meet-mark" aria-hidden="true">OA</div>
+    <div>
+      <p class="eyebrow">Meet ${esc(shortName)}</p>
+      <h2>${esc(name)}</h2>
+      <p>${esc(bio)}${flag(C.physician.shortBio)}</p>
+      <a class="btn btn-light" href="about.html">Training and credentials ${arrow}</a>
+    </div>
+  </div>
+</section>` : ""}
+
+${faq.length ? `
+<section class="section reveal">
+  <div class="wrap faq-wrap">
+    <div><p class="eyebrow">Questions</p><h2>Common questions</h2></div>
+    <div class="faq">
+      ${faq.map((f) => `<details><summary>${esc(f.q)}${flag(f)}</summary><p>${esc(f.a)}</p></details>`).join("")}
+      ${!PRODUCTION ? (C.faq || []).filter((f) => f.status === "missing").map((f) => pending(`answer to "${f.q}"`)).join("") : ""}
+    </div>
+  </div>
+</section>` : ""}
 
 ${contactStrip()}
 `
@@ -477,6 +532,7 @@ ${p.body}
   </div>
   <div class="wrap footer-legal"><p>© ${year} ${esc(legal || name)}. All rights reserved.</p></div>
 </footer>
+${phone || addr ? `<div class="mobile-bar" aria-label="Quick contact">${phone ? `<a href="${telHref(phone)}" class="mb-call">Call the office</a>` : ""}${addr ? `<a href="${mapsHref(addr)}" rel="noopener" target="_blank">Directions</a>` : ""}</div>` : ""}
 <script src="assets/main.js" defer></script>
 </body>
 </html>
@@ -490,7 +546,7 @@ function gaps() {
     if (Array.isArray(node)) return node.forEach((n, i) => walk(n, `${path}[${i}]`));
     if (node && typeof node === "object") {
       if (typeof node.status === "string" && node.status !== "confirmed" && rows[node.status]) {
-        const label = node.label || node.title || node.name || node.stage || (typeof node.value === "string" ? node.value : "");
+        const label = node.q || node.label || node.title || node.name || node.stage || (typeof node.value === "string" ? node.value : "");
         rows[node.status].push({ path, label, source: node.source || "", note: node.note || "" });
       }
       for (const [k, val] of Object.entries(node)) if (k !== "value") walk(val, path ? `${path}.${k}` : k);
