@@ -1,5 +1,5 @@
 {
-  "_readme": "Single editable content record for the site. Every fact carries a `status`. confirmed = approved by Dr. Abela or office staff (only these appear in a production build). public = corroborated in public sources, awaiting practice confirmation (shown in staging builds with a marker). lead = secondary source only (never rendered; listed in the content-gaps report). missing = not yet supplied (staging shows a placeholder; production omits). `source` cites the research handoff reference numbers.",
+  "_readme": "Single editable content record for the site. Every fact carries a `status`. confirmed = approved by Dr. Abela or office staff (only these appear in a production build). public = corroborated in public sources, awaiting practice confirmation (shown in staging builds with a marker). draft = copy written for the site, awaiting Dr. Abela's approval (shown in staging with a Draft marker). lead = secondary source only (never rendered; listed in the content-gaps report). missing = not yet supplied (staging shows a placeholder; production omits). `source` cites the research handoff reference numbers.",
 
   "site": {
     "url": { "value": null, "status": "missing", "note": "No independent domain established. Do not invent one." },
@@ -16,7 +16,7 @@
     "portrait": { "value": null, "status": "missing", "note": "Approved headshot required. Do not use scraped hospital photos." },
     "shortBio": {
       "value": "Oliver G. Abela, MD, FACC, is a Tampa cardiologist with fellowship training in cardiovascular disease, interventional cardiology, and advanced heart failure and transplant cardiology. His background includes complex coronary intervention, structural heart procedures, and cardiovascular imaging. He earned his medical degree at Michigan State University and completed postgraduate training in Michigan, Ohio, Nevada, and Arizona.",
-      "status": "public",
+      "status": "draft",
       "source": "Draft copy, handoff section 8",
       "note": "Editorial draft. Needs physician approval."
     },
@@ -24,9 +24,9 @@
   },
 
   "brand": {
-    "headline": { "value": "Cardiologist in Tampa, Florida", "status": "public", "source": "[1,2]", "note": "Page h1. Names the specialty and city, per the plain-copy rule." },
-    "tagline": { "value": "Advanced heart care. A clear plan forward.", "status": "public", "source": "Editorial recommendation, handoff section 8", "note": "Brand line. Used once per page at most, never as the h1." },
-    "supportingLine": { "value": "Evaluation and treatment for coronary artery disease, advanced heart failure, and heart valve and structural heart conditions.", "status": "public", "source": "Editorial, adapted from handoff section 8" },
+    "headline": { "value": "Cardiologist in Tampa, Florida", "status": "draft", "source": "[1,2]", "note": "Page h1. Names the specialty and city, per the plain-copy rule." },
+    "tagline": { "value": "Advanced heart care. A clear plan forward.", "status": "draft", "source": "Editorial recommendation, handoff section 8", "note": "Brand line. Used once per page at most, never as the h1." },
+    "supportingLine": { "value": "Evaluation and treatment for coronary artery disease, advanced heart failure, and heart valve and structural heart conditions.", "status": "draft", "source": "Editorial, adapted from handoff section 8" },
     "logo": { "value": null, "status": "missing" }
   },
 
@@ -240,27 +240,77 @@
   ],
 
   "symptoms": [
-    { "label": "Chest pain or pressure", "area": "coronary", "status": "public", "source": "Editorial" },
-    { "label": "Shortness of breath or leg swelling", "area": "heart-failure", "status": "public", "source": "Editorial" },
-    { "label": "A heart murmur or valve problem", "area": "structural", "status": "public", "source": "Editorial" },
-    { "label": "High cholesterol or a family history", "area": "prevention", "status": "public", "source": "Editorial" },
-    { "label": "An abnormal heart test result", "area": "imaging", "status": "public", "source": "Editorial" },
-    { "label": "Told you may need a stent or valve procedure", "area": "structural", "status": "public", "source": "Editorial" }
+    { "label": "Chest pain or pressure", "area": "coronary", "status": "draft", "source": "Editorial" },
+    { "label": "Shortness of breath or leg swelling", "area": "heart-failure", "status": "draft", "source": "Editorial" },
+    { "label": "A heart murmur or valve problem", "area": "structural", "status": "draft", "source": "Editorial" },
+    { "label": "High cholesterol or a family history", "area": "prevention", "status": "draft", "source": "Editorial" },
+    { "label": "An abnormal heart test result", "area": "imaging", "status": "draft", "source": "Editorial" },
+    { "label": "Told you may need a stent or valve procedure", "area": "structural", "status": "draft", "source": "Editorial" }
   ],
 
   "visitSteps": [
-    { "title": "Call the office", "text": "Tell the staff what is going on and whether another doctor referred you.", "status": "public", "source": "Editorial", "note": "Confirm the intake process." },
-    { "title": "Your first visit", "text": "Your symptoms, history, medications, and any prior test results are reviewed together.", "status": "public", "source": "Editorial" },
-    { "title": "A clear plan", "text": "You leave knowing the next steps, whether that is testing, treatment, or planning for a procedure.", "status": "public", "source": "Editorial" }
+    { "title": "Call the office", "text": "Tell the staff what is going on and whether another doctor referred you.", "status": "draft", "source": "Editorial", "note": "Confirm the intake process." },
+    { "title": "Your first visit", "text": "Your symptoms, history, medications, and any prior test results are reviewed together.", "status": "draft", "source": "Editorial" },
+    { "title": "A clear plan", "text": "You leave knowing the next steps, whether that is testing, treatment, or planning for a procedure.", "status": "draft", "source": "Editorial" }
   ],
 
   "faq": [
     { "q": "Should I call 911 instead?", "a": "Yes, call 911 if you have chest pain, severe shortness of breath, fainting, or other symptoms that could be a heart attack or stroke. The office and this website are not for emergencies.", "status": "confirmed" },
-    { "q": "Are heart procedures done in the office?", "a": "No. Catheter-based procedures such as stents, and structural heart procedures such as TAVR, are performed in a hospital. Office visits are for evaluation, planning, and follow-up.", "status": "public", "source": "Editorial" },
+    { "q": "Are heart procedures done in the office?", "a": "No. Catheter-based procedures such as stents, and structural heart procedures such as TAVR, are performed in a hospital. Office visits are for evaluation, planning, and follow-up.", "status": "draft", "source": "Editorial" },
     { "q": "Do I need a referral?", "a": null, "status": "missing" },
     { "q": "Which insurance plans are accepted?", "a": null, "status": "missing" },
-    { "q": "What should I bring to my first visit?", "a": "Your ID and insurance card, a list of your medications, and any recent test results or hospital records. The Patient Information page has the full list.", "status": "public", "source": "Editorial" }
+    { "q": "What should I bring to my first visit?", "a": "Your ID and insurance card, a list of your medications, and any recent test results or hospital records. The Patient Information page has the full list.", "status": "draft", "source": "Editorial" }
   ],
+
+  "whyChoose": [
+    { "title": "One specialist across the whole path", "text": "Fellowship training in cardiovascular disease, interventional cardiology, and advanced heart failure, plus credentials in echocardiography and cardiac CT. Diagnosis, imaging, procedures, and long-term care sit with one physician.", "status": "draft", "source": "Built from [1,2,8,10]" },
+    { "title": "Procedures when they are needed", "text": "Training in complex coronary stenting, chronic total occlusion, TAVR, MitraClip, and Watchman. Procedures are performed in the hospital and followed up in the office.", "status": "draft", "source": "Built from [10]" },
+    { "title": "Care informed by research", "text": "Principal investigator for a heart failure clinical trial and a published author on coronary plaque and structural heart cases.", "status": "draft", "source": "Built from [11,14,20]" }
+  ],
+
+  "audiences": [
+    { "title": "New patients", "text": "What to expect, what to bring, and how to schedule.", "href": "patients.html", "status": "confirmed" },
+    { "title": "Current patients", "text": "Refills, test results, records, and after-hours care.", "href": "contact.html#current", "status": "confirmed" },
+    { "title": "Referring physicians", "text": "How to refer, where to fax, and what to include.", "href": "referrals.html", "status": "confirmed" },
+    { "title": "Directions and parking", "text": "Office address, phone, and getting here.", "href": "contact.html", "status": "confirmed" }
+  ],
+
+  "referrals": {
+    "intro": { "value": "Dr. Abela sees patients referred for coronary artery disease, advanced heart failure, structural heart and valve disease, cardiac imaging, and cardiovascular prevention.", "status": "draft", "source": "Built from areasOfCare" },
+    "howTo": { "value": "Fax the referral with recent notes to the office, then call to confirm it was received.", "status": "draft", "source": "Editorial", "note": "Confirm the preferred referral channel (fax, portal, or EHR)." },
+    "include": {
+      "value": [
+        "Patient name, date of birth, phone number, and insurance",
+        "Reason for referral and the question you want answered",
+        "Recent office notes and the medication list",
+        "ECGs and any echo, stress test, CT, or catheterization reports",
+        "Relevant labs, including lipid panel and kidney function"
+      ],
+      "status": "draft", "source": "Editorial"
+    },
+    "urgent": { "value": "For an urgent consult, call the office directly so the request can be prioritized. For emergencies, send the patient to the nearest emergency department.", "status": "draft", "source": "Editorial", "note": "Confirm the urgent referral line and process." },
+    "afterVisit": { "value": "A consultation note is sent to the referring physician after the visit.", "status": "draft", "source": "Editorial", "note": "Confirm the process and turnaround time." },
+    "portal": { "value": null, "status": "missing", "note": "Referral portal or e-fax address, if the office uses one." }
+  },
+
+  "operations": {
+    "visitLength": { "value": null, "status": "missing", "note": "Typical length of a new-patient visit" },
+    "newPatientForms": { "value": null, "status": "missing", "note": "Link to downloadable new-patient forms (PDF)" },
+    "refills": { "value": null, "status": "missing", "note": "How current patients request prescription refills" },
+    "results": { "value": null, "status": "missing", "note": "How patients receive test results" },
+    "records": { "value": null, "status": "missing", "note": "How to request medical records (form, fax)" },
+    "afterHours": { "value": null, "status": "missing", "note": "After-hours instructions, e.g. answering service" },
+    "holidayHours": { "value": null, "status": "missing" },
+    "staffLanguages": { "value": null, "status": "missing", "note": "Languages spoken by office staff (e.g. Spanish)" },
+    "secondOpinions": { "value": null, "status": "missing", "note": "Whether to advertise second opinions on procedure recommendations, and the wording" }
+  },
+
+  "growth": {
+    "reviewsLink": { "value": null, "status": "missing", "note": "Public review profile (e.g. Google Business Profile) URL" },
+    "testimonials": { "value": null, "status": "missing", "note": "Only real patient quotes with written consent" },
+    "serviceArea": { "value": null, "status": "missing", "note": "Neighborhoods and communities served, for local search" },
+    "analytics": { "value": null, "status": "missing", "note": "Privacy-friendly analytics provider (e.g. Plausible, Fathom). Call and directions links already carry data-event hooks." }
+  },
 
   "patientInfo": {
     "whatToBring": {
@@ -271,7 +321,7 @@
         "Recent test results, ECGs, imaging reports, or hospital discharge papers",
         "A list of questions you would like to ask"
       ],
-      "status": "public",
+      "status": "draft",
       "source": "Generic editorial guidance",
       "note": "Generic. Confirm against the office's own intake process."
     },

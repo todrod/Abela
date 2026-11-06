@@ -38,3 +38,31 @@
   }, { threshold: 0.35 });
   document.querySelectorAll(".steps").forEach((s) => io.observe(s));
 })();
+
+// Referral page: print button (hidden until this script runs).
+(() => {
+  const b = document.querySelector("[data-print]");
+  if (!b) return;
+  b.hidden = false;
+  b.addEventListener("click", () => window.print());
+})();
+
+// Staging only: hide or show review markers for a clean preview. Remembered per browser.
+(() => {
+  const t = document.querySelector("[data-toggle-markers]");
+  if (!t) return;
+  const root = document.documentElement;
+  const apply = (on) => {
+    root.classList.toggle("hide-markers", on);
+    t.setAttribute("aria-pressed", String(on));
+    t.textContent = on ? "Show review markers" : "Hide review markers";
+  };
+  let saved = false;
+  try { saved = localStorage.getItem("hide-markers") === "1"; } catch {}
+  apply(saved);
+  t.addEventListener("click", () => {
+    const on = !root.classList.contains("hide-markers");
+    apply(on);
+    try { localStorage.setItem("hide-markers", on ? "1" : "0"); } catch {}
+  });
+})();

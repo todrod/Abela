@@ -22,13 +22,14 @@ const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 /** Is this item allowed into the current build? */
-const ok = (item) => !!item && (item.status === "confirmed" || (!PRODUCTION && item.status === "public"));
+const ok = (item) => !!item && (item.status === "confirmed" || (!PRODUCTION && (item.status === "public" || item.status === "draft")));
 /** Value of a field if it is renderable, else null. */
 const v = (item) => (ok(item) && item.value != null ? item.value : null);
 /** Staging-only marker for anything not yet practice-confirmed. */
 const flag = (item) => {
   if (PRODUCTION || !item || item.status === "confirmed") return "";
   const tip = [item.source && `Source ${item.source}`, item.note].filter(Boolean).join(". ");
+  if (item.status === "draft") return ` <span class="flag flag-draft" title="${esc(tip || "Draft copy for Dr. Abela's approval")}">Draft</span>`;
   return ` <span class="flag" title="${esc(tip)}">Unverified</span>`;
 };
 /** Staging-only placeholder for missing content. */
@@ -44,6 +45,10 @@ const fax = v(C.contact.fax);
 const hours = v(C.contact.hours);
 const emergency = v(C.patientInfo.emergency);
 const tagline = v(C.brand.tagline);
+const npi = v(C.physician.npi);
+const ops = C.operations || {};
+const hasCurrentInfo = Object.values(ops).some((x) => v(x)) || !PRODUCTION;
+const hasReferrals = !!(v(C.referrals?.howTo) || v(C.referrals?.intro)) || (!PRODUCTION && !!fax);
 
 const telHref = (p) => "tel:+1" + p.replace(/\D/g, "");
 const addrLines = (a) => [a.street + (a.suite ? ", " + a.suite : ""), `${a.city}, ${a.region} ${a.postalCode}`];
@@ -90,10 +95,10 @@ const page = (file, navLabel, title, description, body) => {
 // One wording for the main action everywhere: nav, hero, closing panel, mobile bar.
 const CALL_LABEL = phone ? `Call ${phone}` : "";
 const callButton = (cls = "btn btn-primary") =>
-  phone ? `<a class="${cls}" href="${telHref(phone)}">${icon("phone")}<span>${esc(CALL_LABEL)}</span></a>` : "";
+  phone ? `<a class="${cls}" href="${telHref(phone)}" data-event="call">${icon("phone")}<span>${esc(CALL_LABEL)}</span></a>` : "";
 const directionsButton = (cls = "btn btn-secondary") =>
   addr
-    ? `<a class="${cls}" href="${mapsHref(addr)}" rel="noopener" target="_blank">${icon("pin")}<span>Get directions</span><span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>`
+    ? `<a class="${cls}" href="${mapsHref(addr)}" rel="noopener" target="_blank" data-event="directions">${icon("pin")}<span>Get directions</span><span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>`
     : "";
 const textLink = (href, label) => `<a class="text-link" href="${href}"><span>${esc(label)}</span>${icon("arrow")}</a>`;
 
@@ -189,6 +194,10 @@ ${addr ? `<address>${addrLines(addr).map(esc).join("<br>")}${flag(C.contact.addr
   const areaIds = new Set(list(C.areasOfCare).map((a) => a.id));
   const symptoms = list(C.symptoms).filter((s) => areaIds.has(s.area));
   const bio = v(C.physician.shortBio);
+  const why = list(C.whyChoose);
+  const audiences = list(C.audiences).filter((r) =>
+    r.href.startsWith("referrals") ? hasReferrals : r.href.includes("#current") ? hasCurrentInfo : r.href.startsWith("contact") ? !!(addr || phone) : true
+  );
 
   page(
     "index.html",
@@ -214,16 +223,15 @@ ${portrait() ? `<div class="hero-media">${portrait()}</div>` : ""}
 </div>
 </section>
 ${trustStrip()}
-${symptoms.length ? `
-<section class="section" aria-labelledby="reasons-h">
+${why.length ? `
+<section class="section" aria-labelledby="why-h">
 <div class="wrap">
 <div class="section-head">
-<h2 id="reasons-h">Common reasons for a visit</h2>
-<p>Pick the one closest to your situation to read about the related condition.</p>
+<h2 id="why-h">Why patients and physicians choose ${esc(shortName)}</h2>
 </div>
-<ul class="link-list" role="list">
-${symptoms.map((s) => `<li><a href="care.html#${s.area}"><span>${esc(s.label)}</span>${icon("arrow")}</a>${flag(s)}</li>`).join("\n")}
-</ul>
+<ol class="why" role="list">
+${why.map((w, i) => `<li><span class="why-n" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span><h3>${esc(w.title)}${flag(w)}</h3><p>${esc(w.text)}</p></li>`).join("\n")}
+</ol>
 </div>
 </section>` : ""}
 ${areas.length ? `
@@ -233,6 +241,7 @@ ${areas.length ? `
 <h2 id="conditions-h">Conditions treated</h2>
 ${textLink("care.html", "See all conditions")}
 </div>
+${symptoms.length ? `<div class="symptom-chips"><p id="sym-h">Start with a symptom:</p><ul role="list" aria-labelledby="sym-h">${symptoms.map((s) => `<li><a href="care.html#${s.area}">${esc(s.label)}</a>${flag(s)}</li>`).join("")}</ul></div>` : ""}
 <ul class="conditions" role="list">
 ${areas.map((a) => `<li>
 ${conditionIcon(a.id)}
@@ -240,6 +249,15 @@ ${conditionIcon(a.id)}
 <p>${esc(a.summary)}</p>
 <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
 </li>`).join("\n")}
+</ul>
+</div>
+</section>` : ""}
+${audiences.length ? `
+<section class="section" aria-labelledby="help-h">
+<div class="wrap">
+<div class="section-head"><h2 id="help-h">How can we help?</h2></div>
+<ul class="routes" role="list">
+${audiences.map((r) => `<li><a href="${r.href}"><strong>${esc(r.title)}</strong><span>${esc(r.text)}</span>${icon("arrow")}</a></li>`).join("\n")}
 </ul>
 </div>
 </section>` : ""}
@@ -438,6 +456,70 @@ ${faqSection({ id: "faq" })}`
   );
 }
 
+// ---------- For referring physicians ----------
+{
+  const R = C.referrals || {};
+  const intro = v(R.intro);
+  const howTo = v(R.howTo);
+  const include = v(R.include);
+  const urgent = v(R.urgent);
+  const after = v(R.afterVisit);
+  const portal = v(R.portal);
+  const hospitals = list(C.hospitals);
+  const areas = list(C.areasOfCare);
+  page(
+    "referrals.html",
+    "For physicians",
+    "For referring physicians",
+    `How to refer a patient to ${name}: fax, what to include, hospital affiliations, and NPI.`,
+    hasReferrals
+      ? `
+<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
+<h1>Referring a patient to ${esc(shortName)}</h1>
+${intro ? `<p class="lede">${esc(intro)}${flag(R.intro)}</p>` : ""}
+</div></header>
+<div class="wrap prose-grid referral-grid">
+<div>
+<section class="block">
+<h2>How to refer</h2>
+${howTo ? `<p>${esc(howTo)}${flag(R.howTo)}</p>` : ""}
+<dl class="contact-list">
+${fax ? `<div><dt>Referral fax</dt><dd><strong class="fax-number">${esc(fax)}</strong>${flag(C.contact.fax)}</dd></div>` : ""}
+${phone ? `<div><dt>Office phone</dt><dd><a href="${telHref(phone)}" data-event="call">${esc(phone)}</a>${flag(C.contact.phone)}</dd></div>` : ""}
+${portal ? `<div><dt>Referral portal</dt><dd><a href="${esc(portal)}" rel="noopener">${esc(portal)}</a></dd></div>` : !PRODUCTION ? `<div><dt>Referral portal</dt><dd>${pending(R.portal?.note || "referral portal")}</dd></div>` : ""}
+${npi ? `<div><dt>Physician NPI</dt><dd>${esc(npi)}${flag(C.physician.npi)}</dd></div>` : ""}
+</dl>
+</section>
+${include ? `
+<section class="block">
+<h2>What to include${flag(R.include)}</h2>
+<ul class="checklist">${include.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>
+</section>` : ""}
+${urgent || after ? `
+<section class="block">
+<h2>Urgent requests and follow-up</h2>
+${urgent ? `<p>${esc(urgent)}${flag(R.urgent)}</p>` : ""}
+${after ? `<p>${esc(after)}${flag(R.afterVisit)}</p>` : ""}
+</section>` : ""}
+</div>
+<aside>
+${areas.length ? `
+<section class="block panel">
+<h2>Conditions seen</h2>
+<ul class="plain">${areas.map((a) => `<li><a href="care.html#${a.id}">${esc(a.title)}</a> <span class="muted small">· ${esc(settingLabel[a.setting])}</span>${flag(a)}</li>`).join("")}</ul>
+</section>` : ""}
+${hospitals.length ? `
+<section class="block panel">
+<h2>Hospital affiliations</h2>
+<ul class="plain">${hospitals.map((h) => `<li>${esc(h.name)}${flag(h)}</li>`).join("")}</ul>
+</section>` : ""}
+<button class="btn btn-secondary print-btn" type="button" data-print hidden>Print this page for your front desk</button>
+</aside>
+</div>`
+      : ""
+  );
+}
+
 // ---------- Contact & Directions ----------
 {
   page(
@@ -464,6 +546,14 @@ ${v(C.contact.parking) ? `<div><dt>Parking</dt><dd>${esc(v(C.contact.parking))}<
 <div class="actions">${callButton()}${directionsButton()}</div>
 </div>
 <aside>
+${hasCurrentInfo ? `<section class="block panel" id="current">
+<h2>Current patients</h2>
+<dl class="ops-list">
+${[["Prescription refills", "refills"], ["Test results", "results"], ["Medical records", "records"], ["After hours", "afterHours"]]
+  .map(([label, k]) => (v(ops[k]) ? `<div><dt>${label}</dt><dd>${esc(v(ops[k]))}</dd></div>` : PRODUCTION ? "" : `<div><dt>${label}</dt><dd>${pending(ops[k]?.note || label)}</dd></div>`))
+  .join("\n")}
+</dl>
+</section>` : ""}
 <section class="block panel">
 <h2>Before you call</h2>
 <p>Please have your insurance information and your referring physician's name ready.</p>
@@ -560,9 +650,9 @@ function structuredData() {
 }
 
 function layout(p) {
-  const nav = pages
-    .map((x) => `<li><a href="${x.file}"${x.file === p.file ? ' aria-current="page"' : ""}>${esc(x.navLabel)}</a></li>`)
-    .join("");
+  const navItem = (x) => `<li><a href="${x.file}"${x.file === p.file ? ' aria-current="page"' : ""}>${esc(x.navLabel)}</a></li>`;
+  const nav = pages.filter((x) => x.file !== "index.html").map(navItem).join("");
+  const footerNav = pages.map(navItem).join("");
   const year = new Date().getFullYear();
   const url = v(C.site.url);
   const fullTitle = p.file === "index.html" ? `${name} | Cardiologist in Tampa, FL` : `${p.title} | ${name}`;
@@ -582,12 +672,21 @@ ${url ? `<link rel="canonical" href="${esc(url.replace(/\/$/, "") + "/" + (p.fil
 <link rel="preload" href="${assets["source-sans-3.woff2"]}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${assets.css}">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="${esc(fullTitle)}">
+<meta property="og:description" content="${esc(p.description)}">
+${url ? `<meta property="og:url" content="${esc(url.replace(/\/$/, "") + "/" + (p.file === "index.html" ? "" : p.file))}">
+<meta property="og:image" content="${esc(url.replace(/\/$/, ""))}/assets/og-image.png">` : ""}
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <script>${INLINE_JS}</script>
 ${structuredData()}
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
-${PRODUCTION ? "" : `<div class="staging-banner" role="note"><strong>Staging preview.</strong> Items marked <span class="flag">Unverified</span> come from public records and need practice confirmation. They are left out of the production build.</div>`}
+${PRODUCTION ? "" : `<div class="staging-banner" role="note"><strong>Staging preview.</strong> Items marked <span class="flag">Unverified</span> come from public records and need practice confirmation. They are left out of the production build. <button type="button" class="marker-toggle" data-toggle-markers aria-pressed="false">Hide review markers</button></div>`}
 <header class="site-header">
 <div class="wrap header-inner">
 <a class="brand" href="index.html">
@@ -611,9 +710,10 @@ ${p.file === "index.html" || p.file === "contact.html" ? "" : closing()}
 <p class="footer-name">${esc(name)}</p>
 ${practiceName ? `<p>${esc(practiceName)}</p>` : ""}
 ${addr ? `<address>${addrLines(addr).map(esc).join("<br>")}</address>` : ""}
-${phone ? `<p>Tel <a href="${telHref(phone)}">${esc(phone)}</a>${fax ? ` · Fax ${esc(fax)}` : ""}</p>` : ""}
+${phone ? `<p>Tel <a href="${telHref(phone)}" data-event="call">${esc(phone)}</a>${fax ? ` · Fax ${esc(fax)}` : ""}</p>` : ""}
+${hasReferrals && pages.some((x) => x.file === "referrals.html") ? `<p class="footer-ref"><a href="referrals.html">Referring physicians</a>${fax ? `: fax ${esc(fax)}` : ""}${npi ? ` · NPI ${esc(npi)}` : ""}</p>` : ""}
 </div>
-<nav aria-label="Footer"><ul class="plain footer-nav">${nav}</ul></nav>
+<nav aria-label="Footer"><ul class="plain footer-nav">${footerNav}</ul></nav>
 <div class="footer-emergency">
 <p><strong>Medical emergency?</strong> Call 911. This website is for general information only. It is not medical advice and it is not a way to reach the office urgently.</p>
 </div>
@@ -660,7 +760,7 @@ ${PRODUCTION ? "" : "  X-Robots-Tag: noindex, nofollow\n"}
 
 // ---------- content-gaps report ----------
 function gaps() {
-  const rows = { public: [], lead: [], missing: [] };
+  const rows = { draft: [], public: [], lead: [], missing: [] };
   const walk = (node, path) => {
     if (Array.isArray(node)) return node.forEach((n, i) => walk(n, `${path}[${i}]`));
     if (node && typeof node === "object") {
@@ -686,6 +786,11 @@ A production build includes **only** fields with \`"status": "confirmed"\`. To p
 ## Missing: practice must supply (${rows.missing.length})
 ${table(rows.missing)}
 
+## Draft copy: needs Dr. Abela's approval (${rows.draft.length})
+Written for the site from public facts or as standard practice wording. Shown in staging with a "Draft" marker.
+
+${table(rows.draft)}
+
 ## Public record: needs practice confirmation (${rows.public.length})
 These appear in staging with an "Unverified" marker.
 
@@ -706,6 +811,12 @@ for (const p of pages) {
   writeFileSync(join(OUT, p.file), html[p.file]);
 }
 writeFileSync(join(OUT, "_headers"), headersFile());
+// 404 page: uses the shared layout, never listed in navigation.
+html["404.html"] = minifyHtml(layout({
+  file: "404.html", title: "Page not found", description: "This page could not be found.",
+  body: `<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap"><h1>Page not found</h1><p class="lede">The page you were looking for has moved or does not exist.</p><div class="actions"><a class="btn btn-primary" href="index.html"><span>Go to the home page</span>${icon("arrow")}</a>${callButton("btn btn-secondary")}</div></div></header>`,
+}));
+writeFileSync(join(OUT, "404.html"), html["404.html"]);
 
 const siteUrl = v(C.site.url);
 if (PRODUCTION) {

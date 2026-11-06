@@ -29,6 +29,7 @@ Each fact in `content/site.json` has a `status`:
 | Status | Staging build | Production build |
 |---|---|---|
 | `confirmed` | shown | shown |
+| `draft` (copy written for the site, awaiting Dr. Abela's approval) | shown with a blue **Draft** badge | omitted |
 | `public` (public record, not yet confirmed by the practice) | shown with an **Unverified** badge (hover for source) | omitted |
 | `lead` (secondary source only) | omitted | omitted |
 | `missing` (practice must supply) | "Pending from practice" placeholder | omitted |
@@ -51,7 +52,13 @@ src/assets/           styles.css, main.js (mobile menu + call bar), favicon.svg,
 CONTENT-GAPS.md       generated checklist of unconfirmed or missing content
 ```
 
-Pages: Home, About Dr. Abela, Conditions, Research, Patients, Contact.
+Pages: Home, About Dr. Abela, Conditions, Research, Patients, For physicians (referrals), Contact, plus a 404 page.
+
+In staging, the banner's **Hide review markers** switch shows the page without badges or placeholders, for a clean preview.
+
+Share image and touch icon: `node scripts/make-share-images.mjs` (needs Playwright; rerun only if the brand changes).
+
+The latest three-perspective review (cardiologist, office manager, web designer) and its plan are in `docs/AUDIT-2026-11.md`.
 
 ## Deliberately not included
 
