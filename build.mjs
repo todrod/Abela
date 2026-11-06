@@ -72,6 +72,8 @@ const settingLabel = {
   unconfirmed: "Care setting to be confirmed",
 };
 
+const arrow = '<span class="arrow" aria-hidden="true">→</span>';
+
 const portrait = () => {
   const p = v(C.physician.portrait);
   const creds = list(C.credentials);
@@ -93,11 +95,7 @@ const portrait = () => {
   const areas = list(C.areasOfCare).slice(0, 6);
   const areaIds = new Set(list(C.areasOfCare).map((a) => a.id));
   const symptoms = list(C.symptoms).filter((s) => areaIds.has(s.area));
-  const highlights = list(C.highlights);
-  const steps = list(C.visitSteps);
-  const faq = list(C.faq).filter((f) => f.a);
   const bio = v(C.physician.shortBio);
-  const arrow = '<span class="arrow" aria-hidden="true">→</span>';
 
   page(
     "index.html",
@@ -119,12 +117,7 @@ const portrait = () => {
   </div>
 </section>
 
-${highlights.length ? `
-<section class="trust" aria-label="Credentials at a glance">
-  <ul class="wrap trust-list" role="list">
-    ${highlights.map((h) => `<li><strong>${esc(h.label)}${flag(h)}</strong><span>${esc(h.detail)}</span></li>`).join("")}
-  </ul>
-</section>` : ""}
+${trustStrip()}
 
 ${symptoms.length ? `
 <section class="section reveal">
@@ -157,17 +150,7 @@ ${areas.length ? `
   </div>
 </section>` : ""}
 
-${steps.length ? `
-<section class="section reveal">
-  <div class="wrap">
-    <p class="eyebrow">What to expect</p>
-    <h2>From first call to a clear plan</h2>
-    <ol class="steps" role="list">
-      ${steps.map((s, i) => `<li><span class="step-n" aria-hidden="true">${i + 1}</span><h3>${esc(s.title)}${flag(s)}</h3><p>${esc(s.text)}</p></li>`).join("")}
-    </ol>
-    <p class="steps-note">Procedures such as stents and valve replacement happen in a hospital, not in the office. If you need one, the office will explain where and what to expect.</p>
-  </div>
-</section>` : ""}
+${stepsSection()}
 
 ${bio ? `
 <section class="section section-navy reveal">
@@ -182,16 +165,7 @@ ${bio ? `
   </div>
 </section>` : ""}
 
-${faq.length ? `
-<section class="section reveal">
-  <div class="wrap faq-wrap">
-    <div><p class="eyebrow">Questions</p><h2>Common questions</h2></div>
-    <div class="faq">
-      ${faq.map((f) => `<details><summary>${esc(f.q)}${flag(f)}</summary><p>${esc(f.a)}</p></details>`).join("")}
-      ${!PRODUCTION ? (C.faq || []).filter((f) => f.status === "missing").map((f) => pending(`answer to "${f.q}"`)).join("") : ""}
-    </div>
-  </div>
-</section>` : ""}
+${faqSection({ limit: 3 })}
 
 ${contactStrip()}
 `
@@ -206,6 +180,70 @@ function contactStrip() {
     <div>
       <h2>Visit the office</h2>
       ${addr ? `<address>${addrLines(addr).map(esc).join("<br>")}${flag(C.contact.address)}</address>` : ""}
+    </div>
+    <div class="actions">${callButton()}${directionsButton()}</div>
+  </div>
+</section>`;
+}
+
+function trustStrip() {
+  const items = list(C.highlights);
+  if (!items.length) return "";
+  return `
+<section class="trust" aria-label="Credentials at a glance">
+  <ul class="wrap trust-list" role="list">
+    ${items.map((h) => `<li><strong>${esc(h.label)}${flag(h)}</strong><span>${esc(h.detail)}</span></li>`).join("")}
+  </ul>
+</section>`;
+}
+
+function stepsSection() {
+  const steps = list(C.visitSteps);
+  if (!steps.length) return "";
+  return `
+<section class="section reveal">
+  <div class="wrap">
+    <p class="eyebrow">What to expect</p>
+    <h2>From first call to a clear plan</h2>
+    <ol class="steps" role="list">
+      ${steps.map((s, i) => `<li><span class="step-n" aria-hidden="true">${i + 1}</span><h3>${esc(s.title)}${flag(s)}</h3><p>${esc(s.text)}</p></li>`).join("")}
+    </ol>
+    <p class="steps-note">Procedures such as stents and valve replacement happen in a hospital, not in the office. If you need one, the office will explain where and what to expect.</p>
+  </div>
+</section>`;
+}
+
+/** FAQ accordion. `limit` shows the first N answered questions and links to the full list. */
+function faqSection({ limit = Infinity, id = "" } = {}) {
+  const answered = list(C.faq).filter((f) => f.a);
+  const missing = PRODUCTION ? [] : (C.faq || []).filter((f) => f.status === "missing");
+  if (!answered.length && !missing.length) return "";
+  const shown = answered.slice(0, limit);
+  const more = answered.length > shown.length || (limit !== Infinity && missing.length);
+  return `
+<section class="section reveal"${id ? ` id="${id}"` : ""}>
+  <div class="wrap faq-wrap">
+    <div>
+      <p class="eyebrow">Questions</p><h2>Common questions</h2>
+      ${more ? `<a class="text-link" href="patients.html#faq">All questions ${arrow}</a>` : ""}
+    </div>
+    <div class="faq">
+      ${shown.map((f) => `<details><summary>${esc(f.q)}${flag(f)}</summary><p>${esc(f.a)}</p></details>`).join("")}
+      ${limit === Infinity ? missing.map((f) => pending(`answer to "${f.q}"`)).join("") : ""}
+    </div>
+  </div>
+</section>`;
+}
+
+/** Closing call-to-action band shown on interior pages. */
+function ctaBand() {
+  if (!phone && !addr) return "";
+  return `
+<section class="cta-band">
+  <div class="wrap cta-inner">
+    <div>
+      <h2>Questions about your heart health?</h2>
+      <p>Call the office to schedule a visit with ${esc(shortName)}.</p>
     </div>
     <div class="actions">${callButton()}${directionsButton()}</div>
   </div>
@@ -230,8 +268,8 @@ function contactStrip() {
   <h1>${esc(name)}</h1>
   ${bio ? `<p class="lede">${esc(bio)}${flag(C.physician.shortBio)}</p>` : ""}
 </div></header>
-
-<div class="wrap prose-grid">
+${trustStrip()}
+<div class="wrap prose-grid after-trust">
   <div>
     ${approach ? `<section class="block"><h2>How ${esc(shortName)} works with patients</h2><p>${esc(approach)}</p></section>` : `<section class="block">${pending(`${shortName}'s own description of his approach to patient care`)}</section>`}
 
@@ -291,10 +329,11 @@ function contactStrip() {
   <p class="eyebrow">Areas of care</p>
   <h1>Conditions ${esc(shortName)} treats</h1>
   <p class="lede">Each section below notes where care happens. Office visits cover evaluation, planning, and follow-up. Procedures are performed at a hospital.</p>
+  <nav class="jump" aria-label="Jump to a condition"><ul role="list">${areas.map((a) => `<li><a href="#${a.id}">${esc(a.title)}</a></li>`).join("")}</ul></nav>
 </div></header>
 <div class="wrap">
   ${areas.map((a) => `
-  <section class="care-item" id="${a.id}" aria-labelledby="${a.id}-h">
+  <section class="care-item reveal" id="${a.id}" aria-labelledby="${a.id}-h">
     <div class="care-head">
       <h2 id="${a.id}-h">${esc(a.title)}${flag(a)}</h2>
       <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
@@ -380,12 +419,14 @@ function contactStrip() {
     "Patient Information",
     "Patient Information",
     `What to expect and what to bring to your visit with ${name}.`,
-    bring || insurance || links.length || !PRODUCTION
+    bring || insurance || links.length || list(C.faq).length || !PRODUCTION
       ? `
 <header class="page-head"><div class="wrap">
   <p class="eyebrow">Patient information</p>
   <h1>Preparing for your visit</h1>
+  <p class="lede">What happens at a first visit, what to bring, and answers to common questions.</p>
 </div></header>
+${stepsSection()}
 <div class="wrap prose-grid">
   <div>
     ${bring ? `
@@ -393,18 +434,19 @@ function contactStrip() {
       <h2>What to bring${flag(C.patientInfo.whatToBring)}</h2>
       <ul class="checklist">${bring.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
     </section>` : ""}
-    <section class="block">
+    ${insurance || referral != null || phone || !PRODUCTION ? `<section class="block">
       <h2>Insurance and referrals</h2>
       ${insurance ? `<ul class="plain">${insurance.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>` : pending("accepted insurance plans")}
       ${referral != null ? `<p>${esc(referral)}</p>` : pending("referral requirements and self-pay policy")}
       ${phone ? `<p>Coverage varies by plan, so please call the office at <a href="${telHref(phone)}">${esc(phone)}</a> to confirm before your visit.</p>` : ""}
-    </section>
+    </section>` : ""}
   </div>
   <aside>
-    ${links.length ? `<section class="block panel"><h2>Online services</h2><ul class="plain">${links.map((l) => `<li><a href="${esc(l.href)}" rel="noopener">${esc(l.label)}</a></li>`).join("")}</ul></section>` : `<section class="block panel">${pending("authorized booking, portal, records, and billing links")}</section>`}
+    ${links.length ? `<section class="block panel"><h2>Online services</h2><ul class="plain">${links.map((l) => `<li><a href="${esc(l.href)}" rel="noopener">${esc(l.label)}</a></li>`).join("")}</ul></section>` : PRODUCTION ? "" : `<section class="block panel">${pending("authorized booking, portal, records, and billing links")}</section>`}
     ${emergencyNote()}
   </aside>
-</div>`
+</div>
+${faqSection({ id: "faq" })}`
       : ""
   );
 }
@@ -514,6 +556,7 @@ ${PRODUCTION ? "" : `<div class="staging-banner" role="note"><strong>Staging pre
 </header>
 <main id="main" tabindex="-1">
 ${p.body}
+${p.file === "index.html" || p.file === "contact.html" ? "" : ctaBand()}
 </main>
 <footer class="site-footer">
   <div class="wrap footer-grid">

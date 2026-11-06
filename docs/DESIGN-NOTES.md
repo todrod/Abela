@@ -25,6 +25,14 @@ Research date: November 6, 2026. Most sources are agency roundups and trend arti
 7. Common questions
 8. Visit the office: contact strip
 
+## Applied across the rest of the site (v2.1)
+- **Page headers** use the same warm gradient as the homepage hero.
+- **Meet Dr. Abela** shows the credentials strip directly under the header.
+- **Areas of Care** has jump-to buttons for each condition. On mobile they form one row you can swipe sideways. The symptom links on the homepage land on these same sections.
+- **Patient Information** opens with the three visit steps and ends with the full FAQ (`#faq`). The homepage shows the first three questions and links to the full list.
+- **Closing call to action**: every interior page except Contact ends with a sand panel reading "Questions about your heart health?" with Call and Directions buttons.
+- **Scroll fade-ins** apply only to content below the first screen, so nothing visible at load ever fades in.
+
 ## Next design upgrades once assets arrive
 - An approved portrait replaces the "OA" monogram panel, which is the single biggest gain in warmth and trust. The hero chip will sit over the photo.
 - Real office photography (exterior, waiting room) on the Contact page helps first-time visitors recognize the building.
