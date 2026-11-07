@@ -49,6 +49,7 @@ const tagline = v(C.brand.tagline);
 const npi = v(C.physician.npi);
 const ops = C.operations || {};
 const hasCurrentInfo = Object.values(ops).some((x) => v(x)) || !PRODUCTION;
+const hasAbout = !!(v(C.physician.shortBio) || list(C.training).length || list(C.credentials).length);
 const hasReferrals = !!(v(C.referrals?.howTo) || v(C.referrals?.intro)) || (!PRODUCTION && !!fax);
 
 const telHref = (p) => "tel:+1" + p.replace(/\D/g, "");
@@ -77,14 +78,20 @@ const CONDITION_ICONS = {
   pe: '<path d="M12 4v7M12 11c-1.5 1-3 1.5-4.5 1.5M12 11c1.5 1 3 1.5 4.5 1.5"/><path d="M8.5 7.5C5.5 8 4 12 4 15.5 4 18 5 19.5 7 19.5S10 18 10 15v-3M15.5 7.5c3 .5 4.5 4.5 4.5 8 0 2.5-1 4-3 4s-3-1.5-3-4.5v-3"/>',
 };
 const conditionIcon = (id) =>
-  CONDITION_ICONS[id]
-    ? `<span class="cond-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${CONDITION_ICONS[id]}</svg></span>`
-    : "";
+  `<span class="condition-visual"><img src="assets/condition-${esc(id)}.webp" alt="" width="640" height="640" loading="lazy" decoding="async"></span>`;
 
 /** The site's signature motif: a heart-rhythm trace. `pulse` adds the travelling beat. */
 const ECG_PATH = "M0 120 H640 l22 -16 l16 16 H720 l16 -92 l20 156 l18 -104 l12 40 H860 l24 -22 l20 22 H1200";
 const ecg = (cls, pulse = false) =>
   `<svg class="${cls}" aria-hidden="true" viewBox="0 0 1200 200" preserveAspectRatio="none"><path class="ecg-base" pathLength="1" d="${ECG_PATH}"/>${pulse ? `<path class="ecg-pulse" pathLength="1" d="${ECG_PATH}"/>` : ""}</svg>`;
+
+// Decorative vector artwork: no patient data or simulated live measurements.
+const heartScene = () => `<figure class="heart-cinema">
+<video class="heart-film" data-heart-film muted loop playsinline preload="none" poster="assets/heart-poster.webp" aria-label="Illustrative animation of the heart's electrical activation and contraction">
+<source src="assets/heart-cycle.mp4" type="video/mp4">
+</video>
+<figcaption><span class="cinema-dot" aria-hidden="true"></span> The rhythm of the heart <small>Illustrative cardiac cycle</small></figcaption>
+</figure>`;
 
 // Individual condition pages exist for areas with renderable long-form copy (content/conditions.json).
 const conditionPage = (id) => (ok(CONDITIONS[id]) ? `condition-${id}.html` : null);
@@ -197,6 +204,19 @@ ${addr ? `<address>${addrLines(addr).map(esc).join("<br>")}${flag(C.contact.addr
 </section>`;
 }
 
+// Shared editorial header keeps interior pages in the same visual family.
+function interiorHero({title, description = "", image = "heart-poster", parent = "", extra = "", portrait = false, actions = ""}) {
+  return `<header class="page-head on-dark editorial-head"><div class="wrap editorial-grid">
+<div class="editorial-copy"><nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true"> / </span>${parent ? '<a href="care.html">Conditions</a><span aria-hidden="true"> / </span>' : ''}<span>${esc(title)}</span></nav>
+<h1>${esc(title)}</h1>
+${portrait && portraitData ? `<div class="editorial-byline">${portraitImg("about-photo", true)}<span>${esc(shortName)}${practiceName ? `<small>${esc(practiceName)}${flag(C.practice.name)}</small>` : ''}</span></div>` : ''}
+${description ? `<div class="lede">${description}</div>` : ''}
+${actions ? `<div class="actions">${actions}</div>` : ''}</div>
+${portrait ? `<div class="editorial-animation">${heartScene()}<button class="motion-toggle" type="button" data-toggle-motion hidden>Pause animation</button></div>` : `<figure class="editorial-art"><img src="assets/${image}.webp" alt="" width="640" height="640" fetchpriority="high" decoding="async"></figure>`}
+${extra ? `<div class="editorial-extra">${extra}</div>` : ''}
+</div></header>`;
+}
+
 // ---------- Home ----------
 {
   const headline = v(C.brand.headline);
@@ -217,7 +237,7 @@ ${addr ? `<address>${addrLines(addr).map(esc).join("<br>")}${flag(C.contact.addr
     support || `${name}, cardiologist in Tampa, Florida.`,
     `
 <section class="hero on-dark">
-${ecg("hero-ecg", true)}
+
 <div class="wrap hero-grid${portrait() ? " has-media" : ""}">
 <div class="hero-copy">
 <h1>${headline ? esc(headline) + flag(C.brand.headline) : esc(name)}</h1>
@@ -230,7 +250,8 @@ ${addr ? `<li>${icon("pin")}<span>${esc(addrLines(addr).join(", "))}${flag(C.con
 ${v(C.practice.acceptingNewPatients) ? `<li><span class="dot" aria-hidden="true"></span><span>Accepting new patients${flag(C.practice.acceptingNewPatients)}</span></li>` : ""}
 </ul>
 </div>
-${portrait() ? `<div class="hero-media">${portrait()}</div>` : ""}
+${heartScene()}
+<button class="motion-toggle" type="button" data-toggle-motion aria-pressed="false" hidden>Pause animation</button>
 </div>
 </section>
 ${trustStrip()}
@@ -246,7 +267,7 @@ ${why.map((w, i) => `<li><span class="why-n" aria-hidden="true">${String(i + 1).
 </div>
 </section>` : ""}
 ${areas.length ? `
-<section class="section section-sand" aria-labelledby="conditions-h">
+<section class="section section-sand conditions-showcase" aria-labelledby="conditions-h">
 <div class="wrap">
 <div class="section-head split-head">
 <h2 id="conditions-h">Conditions treated</h2>
@@ -255,7 +276,7 @@ ${textLink("care.html", "See all conditions")}
 ${symptoms.length ? `<div class="symptom-chips"><p id="sym-h">Start with a symptom:</p><ul role="list" aria-labelledby="sym-h">${symptoms.map((s) => `<li><a href="${conditionHref(s.area)}">${esc(s.label)}</a>${flag(s)}</li>`).join("")}</ul></div>` : ""}
 <ul class="conditions" role="list">
 ${areas.map((a) => `<li>
-${conditionIcon(a.id)}
+<a class="condition-image-link" href="${conditionHref(a.id)}" tabindex="-1" aria-hidden="true">${conditionIcon(a.id)}<span class="condition-open">${icon("arrow")}</span></a>
 <h3><a href="${conditionHref(a.id)}">${esc(a.title)}</a>${flag(a)}</h3>
 <p>${esc(a.summary)}</p>
 <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
@@ -303,10 +324,7 @@ ${closing({ brand: true })}
   const body =
     bio || training.length || creds.length
       ? `
-<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<div class="about-head">${portraitImg("about-photo", true)}<h1>${esc(name)}</h1></div>
-${bio ? `<p class="lede">${esc(bio)}${flag(C.physician.shortBio)}</p>` : ""}
-</div></header>
+${interiorHero({title: `About ${shortName}`, description: bio ? esc(bio) + flag(C.physician.shortBio) : '', portrait: true, actions: callButton()})}
 ${trustStrip()}
 <div class="wrap prose-grid">
 <div>
@@ -355,23 +373,19 @@ ${langs ? `<p class="muted small">Languages: ${langs.map(esc).join(", ")}${flag(
     `Heart conditions evaluated and treated by ${name} in Tampa.`,
     areas.length
       ? `
-<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<h1>Conditions ${esc(shortName)} treats</h1>
-<p class="lede">Each condition below notes where care happens. Office visits cover evaluation, planning, and follow-up. Procedures take place in a hospital.</p>
-<nav class="jump" aria-label="Conditions on this page"><ul role="list">${areas.map((a) => `<li><a href="#${a.id}">${esc(a.title)}</a></li>`).join("")}</ul></nav>
-</div></header>
+${interiorHero({title: `Conditions ${shortName} treats`, description: 'Each condition below notes where care happens. Office visits cover evaluation, planning, and follow-up. Procedures take place in a hospital.', image: 'condition-imaging', extra: `<nav class="jump" aria-label="Conditions on this page"><ul role="list">${areas.map((a) => `<li><a href="#${a.id}">${esc(a.title)}</a></li>`).join('')}</ul></nav>`})}
 <div class="wrap">
 ${areas.map((a) => `
 <section class="care-item" id="${a.id}" aria-labelledby="${a.id}-h">
-<div class="care-head">
-${conditionIcon(a.id)}<h2 id="${a.id}-h">${esc(a.title)}${flag(a)}</h2>
+<div class="care-art">${conditionIcon(a.id)}</div><div class="care-copy"><div class="care-head">
+<h2 id="${a.id}-h">${esc(a.title)}${flag(a)}</h2>
 <span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
 </div>
 <p class="care-summary">${esc(a.summary)}</p>
 <p>${esc(a.detail)}</p>
 ${a.settingNote ? `<p class="setting-note"><strong>Where care happens:</strong> ${esc(a.settingNote)}</p>` : ""}
 ${conditionPage(a.id) ? `<p class="care-more">${textLink(conditionPage(a.id), `Read more about ${a.title.toLowerCase()}`)}</p>` : ""}
-</section>`).join("")}
+</div></section>`).join("")}
 ${emergencyNote()}
 </div>`
       : ""
@@ -391,12 +405,7 @@ for (const a of list(C.areasOfCare)) {
     c.seoTitle || a.title,
     `${a.title}: symptoms, evaluation, and treatment with ${name}, cardiologist in Tampa, Florida.`,
     `
-<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<p class="crumbs"><a href="care.html">Conditions</a> <span aria-hidden="true">/</span> ${esc(a.title)}</p>
-<div class="cond-title">${conditionIcon(a.id)}<h1>${esc(a.title)}${flag(c)}</h1></div>
-<p class="lede">${esc(c.intro)}</p>
-<span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span>
-</div></header>
+${interiorHero({title: a.title, parent: 'Conditions', image: `condition-${a.id}`, description: `${esc(c.intro)}${flag(c)}<p><span class="tag tag-${a.setting}">${esc(settingLabel[a.setting])}</span></p>`, actions: callButton()})}
 <div class="wrap prose-grid">
 <div>
 ${block("Common signs and reasons for a visit", c.symptoms)}
@@ -409,7 +418,7 @@ ${emergencyNote()}
 <section class="block panel">
 <h2>${esc(shortName)}'s background</h2>
 <p>${esc(a.detail)}${flag(a)}</p>
-${textLink("about.html", "See training and credentials")}
+${hasAbout ? textLink("about.html", "See training and credentials") : ""}
 </section>
 ${others.length ? `<section class="block panel"><h2>Other conditions</h2><ul class="plain">${others.map((o) => `<li><a href="${conditionHref(o.id)}">${esc(o.title)}</a></li>`).join("")}</ul></section>` : ""}
 </aside>
@@ -429,11 +438,8 @@ ${others.length ? `<section class="block panel"><h2>Other conditions</h2><ul cla
     `Clinical research and selected publications by ${name}.`,
     trials.length || pubs.length
       ? `
-<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<h1>Research and publications</h1>
-<p class="lede">A selection of ${esc(shortName)}'s clinical trial work and published papers. This is not a complete bibliography.</p>
-</div></header>
-<div class="wrap narrow">
+${interiorHero({title: 'Research and publications', image: 'condition-imaging', description: `A selection of ${esc(shortName)}'s clinical trial work and published papers. This is not a complete bibliography.`})}
+<div class="wrap research-content">
 ${trials.length ? `
 <section class="block">
 <h2>Clinical trials</h2>
@@ -478,10 +484,7 @@ ${achievements.length ? `<section class="block"><h2>Notable work</h2><ul class="
     `What to expect and what to bring to your visit with ${name}.`,
     bring || insurance || links.length || list(C.faq).length || !PRODUCTION
       ? `
-<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<h1>Preparing for your visit</h1>
-<p class="lede">What happens at a first visit, what to bring, and answers to common questions.</p>
-</div></header>
+${interiorHero({title: 'Preparing for your visit', image: 'condition-prevention', description: 'What happens at a first visit, what to bring, and answers to common questions.', actions: callButton()})}
 ${stepsSection()}
 <div class="wrap prose-grid">
 <div>
@@ -494,7 +497,7 @@ ${insurance || referral != null || phone || !PRODUCTION ? `<section class="block
 <h2>Insurance and referrals</h2>
 ${insurance ? `<ul class="plain">${insurance.map((i) => `<li>${esc(i)}</li>`).join("")}</ul>` : pending("accepted insurance plans")}
 ${referral != null ? `<p>${esc(referral)}</p>` : pending("referral requirements and self-pay policy")}
-${phone ? `<p>Coverage varies by plan, so please call the office at <a href="${telHref(phone)}">${esc(phone)}</a> to confirm before your visit.</p>` : ""}
+${phone ? `<p>Coverage varies by plan, so please call the office at <a href="${telHref(phone)}" data-event="call">${esc(phone)}</a> to confirm before your visit.</p>` : ""}
 </section>` : ""}
 </div>
 <aside>
@@ -525,10 +528,7 @@ ${faqSection({ id: "faq" })}`
     `How to refer a patient to ${name}: fax, what to include, hospital affiliations, and NPI.`,
     hasReferrals
       ? `
-<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<h1>Referring a patient to ${esc(shortName)}</h1>
-${intro ? `<p class="lede">${esc(intro)}${flag(R.intro)}</p>` : ""}
-</div></header>
+${interiorHero({title: `Referring a patient to ${shortName}`, image: 'condition-structural', description: intro ? esc(intro) + flag(R.intro) : '', actions: callButton()})}
 <div class="wrap prose-grid referral-grid">
 <div>
 <section class="block">
@@ -580,16 +580,14 @@ ${hospitals.length ? `
     `Office location, telephone, and directions for ${name}.`,
     addr || phone || !PRODUCTION
       ? `
-<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap">
-<h1>Office location and phone</h1>
-</div></header>
+${interiorHero({title: 'Office location and phone', description: addr ? `<address>${addrLines(addr).map(esc).join('<br>')}</address>${flag(C.contact.address)}` : '', actions: callButton() + directionsButton()})}
 <div class="wrap prose-grid">
 <div>
 ${emergencyNote()}
 <dl class="contact-list">
 ${practiceName ? `<div><dt>Practice</dt><dd>${esc(practiceName)}${flag(C.practice.name)}</dd></div>` : ""}
 ${addr ? `<div><dt>Address</dt><dd><address>${addrLines(addr).map(esc).join("<br>")}</address>${flag(C.contact.address)}</dd></div>` : ""}
-${phone ? `<div><dt>Telephone</dt><dd><a href="${telHref(phone)}">${esc(phone)}</a>${flag(C.contact.phone)}</dd></div>` : ""}
+${phone ? `<div><dt>Telephone</dt><dd><a href="${telHref(phone)}" data-event="call">${esc(phone)}</a>${flag(C.contact.phone)}</dd></div>` : ""}
 ${fax ? `<div><dt>Fax</dt><dd>${esc(fax)}${flag(C.contact.fax)}</dd></div>` : ""}
 ${hours ? `<div><dt>Office hours</dt><dd>${esc(hours)}</dd></div>` : !PRODUCTION ? `<div><dt>Office hours</dt><dd>${pending("office hours")}</dd></div>` : ""}
 ${v(C.contact.parking) ? `<div><dt>Parking</dt><dd>${esc(v(C.contact.parking))}</dd></div>` : !PRODUCTION ? `<div><dt>Parking</dt><dd>${pending("parking instructions")}</dd></div>` : ""}
@@ -601,7 +599,7 @@ ${addr ? `<div class="map-facade" data-map-src="https://www.google.com/maps?q=${
 </div>` : ""}
 </div>
 <aside>
-${hasCurrentInfo ? `<section class="block panel" id="current">
+${hasCurrentInfo ? `<section class="block panel${Object.values(ops).some((value) => v(value)) ? "" : " pending-only"}" id="current">
 <h2>Current patients</h2>
 <dl class="ops-list">
 ${[["Prescription refills", "refills"], ["Test results", "results"], ["Medical records", "records"], ["After hours", "afterHours"]]
@@ -715,7 +713,7 @@ function structuredData() {
   if (practiceName) data.parentOrganization = { "@type": "MedicalClinic", name: practiceName };
   const url = v(C.site.url);
   if (url) data.url = url;
-  return `<script type="application/ld+json">${JSON.stringify(data)}</script>`;
+  return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`;
 }
 
 function layout(p) {
@@ -733,6 +731,7 @@ function layout(p) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
+${p.file === "404.html" ? '<base href="/">' : ""}
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(p.description)}">
@@ -742,7 +741,7 @@ ${url ? `<link rel="canonical" href="${esc(url.replace(/\/$/, "") + "/" + (p.fil
 <link rel="preload" href="${assets["source-serif-4.woff2"]}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="${assets["source-sans-3.woff2"]}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${assets.css}">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-heart.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 ${analyticsTag()}
@@ -757,13 +756,13 @@ ${url ? `<meta property="og:url" content="${esc(url.replace(/\/$/, "") + "/" + (
 <script>${INLINE_JS}</script>
 ${structuredData()}
 </head>
-<body>
+<body class="${p.file === 'index.html' ? 'home-page' : 'interior-page'} page-${p.file.replace(/\.html$/, '')}">
 <a class="skip-link" href="#main">Skip to main content</a>
-${PRODUCTION ? "" : `<aside class="staging-banner" aria-label="Staging preview"><strong>Staging preview.</strong> Items marked <span class="flag">Unverified</span> come from public records and need practice confirmation. They are left out of the production build. <button type="button" class="marker-toggle" data-toggle-markers aria-pressed="false">Hide review markers</button></aside>`}
+${PRODUCTION ? "" : `<aside class="staging-banner" aria-label="Staging preview"><strong>Staging preview.</strong> Items marked <strong>Unverified</strong> come from public records and need practice confirmation. They are left out of the production build. <button type="button" class="marker-toggle" data-toggle-markers aria-pressed="false">Hide review markers</button></aside>`}
 <header class="site-header">
 <div class="wrap header-inner">
 <a class="brand" href="index.html">
-<svg class="brand-mark" aria-hidden="true" viewBox="0 0 32 32" width="32" height="32"><rect width="32" height="32" rx="8" fill="currentColor"/><path d="M5 17h6l2.5-6 4 11 3-7H27" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<span class="brand-emblem"><img class="brand-heart" src="assets/brand-heart.webp" alt="" width="64" height="64" decoding="async"></span>
 <span><span class="brand-name">${esc(name)}</span><span class="brand-sub">${practiceName ? esc(practiceName) : "Cardiology · Tampa, FL"}</span></span>
 </a>
 <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><span class="visually-hidden">Open menu</span><span class="bars" aria-hidden="true"></span></button>
@@ -793,7 +792,7 @@ ${hasReferrals && pages.some((x) => x.file === "referrals.html") ? `<p class="fo
 </div>
 <div class="wrap footer-legal"><p>© ${year} ${esc(legal || name)}. All rights reserved.</p></div>
 </footer>
-${phone || addr ? `<nav class="mobile-bar" aria-label="Quick contact">${callButton("mb-call")}${addr ? `<a href="${mapsHref(addr)}" rel="noopener" target="_blank">Get directions<span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>` : ""}</nav>` : ""}
+${phone || addr ? `<nav class="mobile-bar" aria-label="Quick contact">${callButton("mb-call")}${addr ? `<a href="${mapsHref(addr)}" rel="noopener" target="_blank" data-event="directions">Get directions<span class="visually-hidden"> (opens Google Maps in a new tab)</span></a>` : ""}</nav>` : ""}
 <script src="${assets.js}" defer></script>
 </body>
 </html>
@@ -803,6 +802,15 @@ ${phone || addr ? `<nav class="mobile-bar" aria-label="Quick contact">${callButt
 // ---------- hosting files ----------
 function headersFile() {
   // Netlify / Cloudflare Pages format. Other hosts: mirror these as server config.
+  // Exact paths avoid hosts combining overlapping Cache-Control rules.
+  const assetPaths = (dir, prefix) => readdirSync(dir).flatMap((file) =>
+    statSync(join(dir, file)).isDirectory()
+      ? assetPaths(join(dir, file), `${prefix}/${file}`)
+      : [`${prefix}/${file}`]);
+  const cachePaths = assetPaths(join(OUT, "assets"), "assets");
+  if (phone || addr) cachePaths.push("assets/office-contact.vcf");
+  const immutable = new Set(Object.values(assets));
+  const cacheRules = cachePaths.map((path) => `/${path}\n  Cache-Control: public, ${immutable.has(path) ? "max-age=31536000, immutable" : "max-age=0, must-revalidate"}`).join("\n\n");
   const csp = [
     "default-src 'self'",
     `script-src 'self' 'sha256-${INLINE_JS_HASH}'${ANALYTICS ? " " + ANALYTICS.origin : ""}`,
@@ -821,11 +829,7 @@ function headersFile() {
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
 ${PRODUCTION ? "" : "  X-Robots-Tag: noindex, nofollow\n"}
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/assets/favicon.svg
-  Cache-Control: public, max-age=86400
+${cacheRules}
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
@@ -889,7 +893,7 @@ writeFileSync(join(OUT, "_headers"), headersFile());
 // Web app manifest (add to home screen).
 writeFileSync(join(OUT, "site.webmanifest"), JSON.stringify({
   name, short_name: shortName, start_url: "./", display: "browser", background_color: "#faf8f4", theme_color: "#14304f",
-  icons: [{ src: "assets/apple-touch-icon.png", sizes: "180x180", type: "image/png" }, { src: "assets/favicon.svg", sizes: "any", type: "image/svg+xml" }],
+  icons: [{ src: "assets/apple-touch-icon.png", sizes: "180x180", type: "image/png" }, { src: "assets/favicon-heart.png", sizes: "64x64", type: "image/png" }],
 }, null, 2));
 // Contact card (vCard) for patients and referring offices: office details only, never personal data.
 if (phone || addr) {
@@ -902,7 +906,7 @@ if (phone || addr) {
 // 404 page: uses the shared layout, never listed in navigation.
 html["404.html"] = minifyHtml(layout({
   file: "404.html", title: "Page not found", description: "This page could not be found.",
-  body: `<header class="page-head on-dark">${ecg("head-ecg")}<div class="wrap"><h1>Page not found</h1><p class="lede">The page you were looking for has moved or does not exist.</p><div class="actions"><a class="btn btn-primary" href="index.html"><span>Go to the home page</span>${icon("arrow")}</a>${callButton("btn btn-secondary")}</div></div></header>`,
+  body: interiorHero({title: 'Page not found', description: 'The page you were looking for has moved or does not exist.', actions: `<a class="btn btn-primary" href="index.html">Go to the home page${icon('arrow')}</a>`}),
 }));
 writeFileSync(join(OUT, "404.html"), html["404.html"]);
 
@@ -915,7 +919,7 @@ if (PRODUCTION) {
     writeFileSync(join(OUT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>\n`);
   }
   // Guard: nothing from staging may reach a production build.
-  const leaks = Object.entries(html).filter(([, h]) => /class="flag"|class="pending"|staging-banner|noindex/.test(h));
+  const leaks = Object.entries(html).filter(([, h]) => /class="[^"]*\b(?:flag|pending|staging-banner)\b|noindex|placeholder/i.test(h));
   if (leaks.length) {
     console.error(`Production build contains staging markers in: ${leaks.map(([f]) => f).join(", ")}`);
     process.exit(1);
@@ -934,4 +938,4 @@ console.log(`Built ${pages.length} page(s) [${MODE}] -> dist/`);
 for (const p of pages) console.log(`  ${p.file.padEnd(14)} ${kb(size(p.file)).padStart(9)}  (${kb(gz(p.file))} gzip)`);
 for (const a of shared) console.log(`  ${basename(a).padEnd(32)} ${kb(size(a)).padStart(9)}${a.endsWith(".woff2") ? "" : `  (${kb(gz(a))} gzip)`}`);
 const firstLoad = gz("index.html") + gz(assets.css) + gz(assets.js) + size(assets["source-serif-4.woff2"]) + size(assets["source-sans-3.woff2"]);
-console.log(`  Home page first load, compressed: ${kb(firstLoad)}`);
+console.log(`  Home HTML + CSS + JS + fonts (gzip where applicable; excludes images/video): ${kb(firstLoad)}`);

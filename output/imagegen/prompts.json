@@ -1,0 +1,39 @@
+{
+  "tool": "Built-in image_gen",
+  "heroPrompt": "Use case: stylized-concept. Create one premium cinematic 3D medical illustration for a cardiologist website hero: a highly dimensional anatomically plausible human heart, anterior view, upright with apex down and slightly viewer-right, entire heart and great vessels visible. Beautiful sculptural translucent warm ivory and muted coral myocardium, deep burgundy coronary vessels, realistic subtle subsurface scattering, glossy controlled highlights, fine tissue detail without gore. Upper atria clearly readable and ventricles dominant. Faint cyan-white internal conduction pathways visible through translucent material, not lightning bolts. Pure uniform midnight navy background #0b1929, no floor, no text, no labels, no symbols, no frames, no gradients at image edges. Centered heart occupies 78 percent of a square image with generous empty margin, studio rim light cyan from right and warm champagne light left. Sophisticated high-end biomedical CGI, not cartoon, not vector, not line art. This is a base frame for a beating-heart animation; keep a neutral relaxed cardiac shape. Output a single square image.",
+  "conditionPrompts": [
+    {
+      "id": "coronary",
+      "prompt": "Use case: scientific-educational. Asset: premium cardiology website condition illustration. A large precise cutaway of a coronary artery showing a crescent of golden lipid plaque narrowing the lumen, a few red blood cells within the remaining open lumen. Three-quarter macro view, elegant sectional anatomy. Cinematic polished 3D medical illustration, anatomically plausible, sculptural tissue with realistic subsurface scattering, muted coral, burgundy, warm ivory and subtle cyan rim light. Single centered composition on uniform midnight navy #0b1929, generous 15 percent margins, square image. Same visual family as a premium medical atlas rendered by a luxury CGI studio. No text, labels, words, letters, numbers, grid, logos, watermarks, line icons or flat vector art. Designed to remain readable in a 400px wide card."
+    },
+    {
+      "id": "heart-failure",
+      "prompt": "Use case: scientific-educational. Asset: premium cardiology website condition illustration. A three-quarter cutaway human heart showing four chambers, a visibly enlarged left ventricle and thin ventricular wall, elegant internal chamber anatomy, soft cyan accents conveying flow without arrows. Cinematic polished 3D medical illustration, anatomically plausible, sculptural tissue with realistic subsurface scattering, muted coral, burgundy, warm ivory and subtle cyan rim light. Single centered composition on uniform midnight navy #0b1929, generous 15 percent margins, square image. Same visual family as a premium medical atlas rendered by a luxury CGI studio. No text, labels, words, letters, numbers, grid, logos, watermarks, line icons or flat vector art. Designed to remain readable in a 400px wide card."
+    },
+    {
+      "id": "structural",
+      "prompt": "Use case: scientific-educational. Asset: premium cardiology website condition illustration. A beautiful close-up cutaway of an aortic valve and aortic root, three delicate valve leaflets visible within the circular opening, ivory and warm coral tissue, elegant dimensional anatomy. Cinematic polished 3D medical illustration, anatomically plausible, sculptural tissue with realistic subsurface scattering, muted coral, burgundy, warm ivory and subtle cyan rim light. Single centered composition on uniform midnight navy #0b1929, generous 15 percent margins, square image. Same visual family as a premium medical atlas rendered by a luxury CGI studio. No text, labels, words, letters, numbers, grid, logos, watermarks, line icons or flat vector art. Designed to remain readable in a 400px wide card."
+    },
+    {
+      "id": "imaging",
+      "prompt": "Use case: scientific-educational. Asset: premium cardiology website condition illustration. A translucent anatomical human heart reconstructed as a high-end cardiac CT volume rendering, subtly layered thin scan planes behind it, coronary vessels visible, luminous cyan and ivory anatomy. Cinematic polished 3D medical illustration, anatomically plausible, sculptural tissue with realistic subsurface scattering, muted coral, burgundy, warm ivory and subtle cyan rim light. Single centered composition on uniform midnight navy #0b1929, generous 15 percent margins, square image. Same visual family as a premium medical atlas rendered by a luxury CGI studio. No text, labels, words, letters, numbers, grid, logos, watermarks, line icons or flat vector art. Designed to remain readable in a 400px wide card."
+    },
+    {
+      "id": "prevention",
+      "prompt": "Use case: scientific-educational. Asset: premium cardiology website condition illustration. An elegant comparison of two adjacent artery cross sections, one clean open lumen and one moderately narrowed by gold lipid deposits, rounded coral vessel walls, a few red cells. No arrows or badges. Cinematic polished 3D medical illustration, anatomically plausible, sculptural tissue with realistic subsurface scattering, muted coral, burgundy, warm ivory and subtle cyan rim light. Single centered composition on uniform midnight navy #0b1929, generous 15 percent margins, square image. Same visual family as a premium medical atlas rendered by a luxury CGI studio. No text, labels, words, letters, numbers, grid, logos, watermarks, line icons or flat vector art. Designed to remain readable in a 400px wide card."
+    },
+    {
+      "id": "shock",
+      "prompt": "Use case: scientific-educational. Asset: premium cardiology website condition illustration. A detailed human heart with a slender percutaneous circulatory-support catheter passing through the aortic valve into the left ventricle, partial cutaway reveals placement, sophisticated medical CGI, no gore. Cinematic polished 3D medical illustration, anatomically plausible, sculptural tissue with realistic subsurface scattering, muted coral, burgundy, warm ivory and subtle cyan rim light. Single centered composition on uniform midnight navy #0b1929, generous 15 percent margins, square image. Same visual family as a premium medical atlas rendered by a luxury CGI studio. No text, labels, words, letters, numbers, grid, logos, watermarks, line icons or flat vector art. Designed to remain readable in a 400px wide card."
+    }
+  ],
+  "animation": {
+    "durationSeconds": 1,
+    "framesPerSecond": 50,
+    "notes": "Stylized 2D deformation of generated 3D-rendered artwork, not a physiological 3D simulation. Atrial activation 0–0.12s; AV node highlight/delay 0.11–0.20s; ventricular activation 0.20–0.36s; ventricular contraction follows 0.25–0.68s.",
+    "references": [
+      "https://www.nhlbi.nih.gov/health/heart/heart-beats",
+      "https://medlineplus.gov/ency/anatomyvideos/000021.htm"
+    ]
+  }
+}

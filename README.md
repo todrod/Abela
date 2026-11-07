@@ -7,6 +7,7 @@ A static, mobile-first site with no dependencies. All practice facts live in **o
 ```sh
 node build.mjs               # staging build -> dist/ (for review)
 node build.mjs --production  # production build -> dist/ (launch)
+npm test                     # isolated build and regression checks
 npm run serve                # preview dist/ at http://localhost:8080
 ```
 
@@ -17,7 +18,7 @@ Requires Node 18+. There is nothing to install.
 - **Minified, fingerprinted assets.** CSS and JS are minified and named by content hash (`styles.<hash>.css`), so hosts can cache them for a year without serving stale files.
 - **Self-hosted fonts.** Source Serif 4 and Source Sans 3 (SIL OFL 1.1), Latin subset, variable weight, about 78 KB together. They are preloaded and use metric-matched fallbacks so text does not jump while loading. No third-party requests are made.
 - **Compact HTML.** Indentation and blank lines are stripped.
-- **`_headers`.** This is for Netlify or Cloudflare Pages; on another host, copy the same values into its server config. It sets a strict Content-Security-Policy (the one inline script is allowed by hash), long-lived caching for `/assets/*`, and `nosniff`, `Referrer-Policy` and `Permissions-Policy`.
+- **`_headers`.** This is for Netlify or Cloudflare Pages; on another host, copy the same values into its server config. It sets a strict Content-Security-Policy (the one inline script is allowed by hash), long-lived caching only for fingerprinted assets; other assets revalidate, and `nosniff`, `Referrer-Policy` and `Permissions-Policy`.
 - **`robots.txt` and sitemap.** Production gets an allow-all `robots.txt`, plus `sitemap.xml` once `site.url` is confirmed. Staging gets disallow-all.
 - **Production guard.** The build fails if any staging marker (badge, placeholder, banner, `noindex`) would reach production output.
 - **Size report.** Each build prints page, asset and font sizes, plus the compressed first-load weight of the home page (about 85 KB).
@@ -28,7 +29,7 @@ Requires Node 18+. There is nothing to install.
 - **Analytics.** Set `growth.analytics.value` to `{ "provider": "plausible", "domain": "example.com" }` or `{ "provider": "fathom", "site": "ID" }` and mark it confirmed. The script, security policy and click events (`call`, `directions`, `save-contact`) turn on together.
 - **Domain.** Set `site.url` to enable canonical links, `og:url`/`og:image`, `sitemap.xml` and the sitemap line in `robots.txt`.
 
-CI (`.github/workflows/build.yml`) runs the guarded production build and the staging build on every push and uploads both as artifacts.
+CI (`.github/workflows/build.yml`) runs six isolated regression tests, the guarded production build and the staging build on every push and uploads both as artifacts.
 
 ## How verification works
 
@@ -75,3 +76,9 @@ The latest three-perspective review (cardiologist, office manager, web designer)
 - No portrait or logo. A neutral placeholder stands in until approved assets are supplied. To add a portrait, set `physician.portrait.value` to `{ "src": "assets/portrait.jpg", "alt": "…" }` and place the file in `src/assets/`.
 
 Source research: *Oliver G. Abela, MD, FACC: Website research and Codex handoff* (Nov 2, 2026). Bracketed numbers in `site.json` refer to its source list.
+
+## Local preview notes
+
+The site is intended to be served at the domain root. The custom 404 uses `/` as its base so assets and navigation work for nested missing URLs. Subdirectory hosting needs a configured base path. The Python preview server does not apply `_headers` or custom 404 routing; verify those on the chosen host before launch.
+
+If the default Homebrew Node fails with a missing `libsimdjson` error on this machine, use the existing working installation: `PATH="/Users/todrod/.local/node/bin:$PATH" npm test` (or `npm run build`).

@@ -85,3 +85,47 @@ Every animation is disabled under `prefers-reduced-motion`, and content is fully
 - https://borshoff.biz/work/priority-physicians-rebrand/
 - https://getdeardoc.com/blog/medical-practice-website-design
 - https://www.nngroup.com/reports/senior-citizens-on-the-web/
+
+## Cinematic medical artwork
+
+Replaced the rejected line-art heart and small condition icons with seven generated CGI-style illustrations. Sources and exact built-in image generation prompts are retained in `output/imagegen/`. Web assets live in `src/assets/`: six 640px WebP condition illustrations, a heart poster, a 1-second H.264 animation, and a downloadable GIF.
+
+The hero uses the MP4 for efficient playback and real pause/resume. Reduced-motion users initially see the static poster and can explicitly choose Play. Playback pauses offscreen and in a hidden tab. The GIF is a standalone deliverable, not loaded by the website.
+
+The animation is a stylized deformation of a generated image, with atrial activation, AV delay, and ventricular activation preceding ventricular contraction. Sequence reference: https://www.nhlbi.nih.gov/health/heart/heart-beats. It is labelled illustrative, and does not claim diagnostic fidelity. Illustrations are conceptual artwork, not patient imaging; physician review of educational anatomy remains part of content sign-off.
+
+Rebuild the animation with `node scripts/make-heart-animation.mjs` (optional authoring dependencies: ffmpeg with libx264 and cwebp). Runtime site dependencies remain unchanged. The build's historical first-load size line excludes images and video; it is not the total transfer size of this illustrated design.
+
+## Site-wide editorial polish
+
+All interior pages, including the six condition details and 404, now use the shared `interiorHero` component: breadcrumb, serif title, contextual description/actions, and the existing cinematic artwork. The physician's small directory photo remains a byline rather than being enlarged beyond its useful resolution.
+
+- About: an editorial training timeline and a navy credentials panel.
+- Conditions index: alternating large illustrations and condition summaries, with anchor navigation.
+- Condition details: full-size topical artwork and consistent reading/sidebar hierarchy.
+- Research: two-column clinical-trial and numbered-publication layout.
+- Patients: framed visit steps, clearer checklists, and individual FAQ panels.
+- Referrals and Contact: prominent, grouped contact details and consistent supporting panels.
+- Shared closing panels and footer use the same midnight navy as the homepage.
+
+Verification: six Node regression tests pass. Browser checks covered all 13 interior/recovery pages at desktop and 375px, plus About, Conditions, Research, Patients, Referrals, and Contact at 768px. No horizontal overflow observed; header artwork loaded on every page. Print CSS removes header artwork/navigation and restores white backgrounds for dark panels; an actual printer/PDF render was not performed in this pass. No practice facts or approval statuses were changed.
+
+### Mobile polish — November 2026
+
+Reviewed all 14 staging routes (home, about, conditions index, six condition details,
+research, patients, referrals, contact, and 404). Browser layout checks at 320, 390,
+430, 768, 1024, and 1440 CSS pixels found no page overflow or clipped headings,
+panels, or hero artwork after fixes. Full-page visual review used a 375px viewport;
+390px scrolling checks confirmed all homepage and condition-index images loaded.
+
+Fixed the conditions hero's intrinsic grid sizing: its scrolling topic list had
+expanded the entire hero beyond the viewport. Added consistent mobile gutters,
+contained illustrations, stacked action buttons, wrapping labels, comfortable
+footer targets, and safe-area padding. The menu scrolls within short landscape
+screens and hides the bottom contact bar while open. Interior hero actions now
+suppress the duplicate sticky contact bar while visible. Clean review mode hides
+empty pending-only panels and detail rows without changing approval statuses.
+
+Verified menu navigation, Escape dismissal, FAQ expansion, condition jump links,
+375px-high landscape menu containment, and pending-only panel visibility. All six
+Node build tests pass. These are browser viewport checks, not physical-device tests.

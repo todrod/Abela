@@ -20,7 +20,7 @@
 // so the same action never appears twice on one screen.
 (() => {
   const bar = document.querySelector(".mobile-bar");
-  const heroActions = document.querySelector(".hero .actions");
+  const heroActions = document.querySelector(".hero .actions, .editorial-head .actions");
   if (!bar || !heroActions || !("IntersectionObserver" in window)) return;
   new IntersectionObserver(([e]) => bar.classList.toggle("is-hidden", e.isIntersecting)).observe(heroActions);
 })();
@@ -92,3 +92,25 @@ document.addEventListener("click", (e) => {
   if (typeof window.plausible === "function") window.plausible(name);
   else if (window.fathom && typeof window.fathom.trackEvent === "function") window.fathom.trackEvent(name);
 });
+
+// Video supplies a lighter animation than GIF and can actually pause.
+(() => {
+  const video = document.querySelector('[data-heart-film]');
+  const button = document.querySelector('[data-toggle-motion]');
+  if (!video || !button) return;
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let paused = reduced.matches;
+  let visible = !('IntersectionObserver' in window);
+  const sync = () => {
+    button.hidden = false;
+    button.setAttribute('aria-pressed', String(paused));
+    button.textContent = paused ? 'Play animation' : 'Pause animation';
+    if (paused || !visible || document.hidden) video.pause();
+    else video.play().catch((error) => { if (error.name === 'AbortError') return; paused = true; button.textContent = 'Play animation'; button.setAttribute('aria-pressed', 'true'); });
+  };
+  button.addEventListener('click', () => { paused = !paused; sync(); });
+  reduced.addEventListener('change', () => { paused = reduced.matches; sync(); });
+  document.addEventListener('visibilitychange', sync);
+  if ('IntersectionObserver' in window) new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }).observe(video);
+  sync();
+})();

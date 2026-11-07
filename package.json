@@ -7,7 +7,10 @@
   "scripts": {
     "build": "node build.mjs",
     "build:production": "node build.mjs --production",
-    "serve": "python3 -m http.server 8080 --directory dist"
+    "serve": "python3 -m http.server 8080 --directory dist",
+    "test": "node --test"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  }
 }

@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Regression tests
+        run: npm test
+
       # Production first: the build fails if any staging marker would leak into it.
       - name: Production build (guarded)
         run: node build.mjs --production
